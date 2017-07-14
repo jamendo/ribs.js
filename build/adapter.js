@@ -1,20 +1,27 @@
-'use strict';
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 (function (factory) {
-    if (typeof module === 'object' && typeof module.exports === 'object') {
-        var v = factory(require, exports); if (v !== undefined) module.exports = v;
+    if (typeof module === "object" && typeof module.exports === "object") {
+        var v = factory(require, exports);
+        if (v !== undefined) module.exports = v;
     }
-    else if (typeof define === 'function' && define.amd) {
-        define(["require", "exports", 'backbone', 'jquery', 'underscore'], factory);
+    else if (typeof define === "function" && define.amd) {
+        define(["require", "exports", "backbone", "jquery", "underscore"], factory);
     }
 })(function (require, exports) {
-    var Backbone = require('backbone');
-    var $ = require('jquery');
-    var _ = require('underscore');
+    'use strict';
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var Backbone = require("backbone");
+    var $ = require("jquery");
+    var _ = require("underscore");
     var Request = (function () {
         function Request(options) {
             if (options === void 0) { options = { data: null, type: 'GET', url: '' }; }
@@ -30,7 +37,7 @@ var __extends = (this && this.__extends) || function (d, b) {
             return this;
         };
         return Request;
-    })();
+    }());
     exports.Request = Request;
     var Adapter = (function () {
         function Adapter(options) {
@@ -49,12 +56,12 @@ var __extends = (this && this.__extends) || function (d, b) {
             return new Request(options);
         };
         return Adapter;
-    })();
+    }());
     exports.Adapter = Adapter;
     var DefaultAdapter = (function (_super) {
         __extends(DefaultAdapter, _super);
         function DefaultAdapter() {
-            _super.apply(this, arguments);
+            return _super !== null && _super.apply(this, arguments) || this;
         }
         DefaultAdapter.prototype.getRequestInstance = function (options) {
             if (options === void 0) { options = { data: null, type: 'GET', url: '' }; }
@@ -62,16 +69,15 @@ var __extends = (this && this.__extends) || function (d, b) {
             return new DefaultRequest(options);
         };
         return DefaultAdapter;
-    })(Adapter);
+    }(Adapter));
     exports.DefaultAdapter = DefaultAdapter;
     ;
     ;
     var DefaultRequest = (function (_super) {
         __extends(DefaultRequest, _super);
         function DefaultRequest(options) {
-            var _this = this;
-            _super.call(this, options);
-            this.requestList = [];
+            var _this = _super.call(this, options) || this;
+            _this.requestList = [];
             var errorList = [];
             var responseList = [];
             var successCallback = null;
@@ -97,15 +103,16 @@ var __extends = (this && this.__extends) || function (d, b) {
                 };
             }
             if (options.data instanceof Array) {
-                var requestOptions = $.extend({}, options);
+                var requestOptions_1 = $.extend({}, options);
                 options.data.forEach(function (dataParameters) {
-                    requestOptions.data = dataParameters;
-                    _this.doRequest(requestOptions);
+                    requestOptions_1.data = dataParameters;
+                    _this.doRequest(requestOptions_1);
                 });
             }
             else {
-                this.doRequest(options);
+                _this.doRequest(options);
             }
+            return _this;
         }
         DefaultRequest.prototype.doRequest = function (options) {
             this.requestList.push($.ajax(options));
@@ -121,35 +128,35 @@ var __extends = (this && this.__extends) || function (d, b) {
             // convert data for API Jamendo
             if (options.data instanceof Array) {
                 this.originalData = options.data;
-                var paramList = [];
-                var uniqueKeyParam = {};
+                var paramList_1 = [];
+                var uniqueKeyParam_1 = {};
                 options.data.forEach(function (value) {
                     var keys = Object.keys(value);
                     if (keys.length > 1) {
                         // Multi-parameters have individual request because they can't be combined with others simple request
-                        paramList.push(_.extend({}, value));
+                        paramList_1.push(_.extend({}, value));
                     }
                     else {
                         // Group by single attribute 
                         var attribute = keys[0];
-                        if (!(attribute in uniqueKeyParam)) {
-                            uniqueKeyParam[attribute] = [];
+                        if (!(attribute in uniqueKeyParam_1)) {
+                            uniqueKeyParam_1[attribute] = [];
                         }
                         var dataValue = value[attribute];
                         if (dataValue instanceof Array) {
-                            uniqueKeyParam[attribute].splice.apply(uniqueKeyParam[attribute], [uniqueKeyParam[attribute].length, 0].concat(dataValue));
+                            uniqueKeyParam_1[attribute].splice.apply(uniqueKeyParam_1[attribute], [uniqueKeyParam_1[attribute].length, 0].concat(dataValue));
                         }
                         else {
-                            uniqueKeyParam[attribute].push(dataValue);
+                            uniqueKeyParam_1[attribute].push(dataValue);
                         }
                     }
                 });
-                for (var attribute in uniqueKeyParam) {
+                for (var attribute in uniqueKeyParam_1) {
                     var dataAttribute = {};
-                    dataAttribute[attribute] = _.uniq(uniqueKeyParam[attribute].sort(), true);
-                    paramList.push(dataAttribute);
+                    dataAttribute[attribute] = _.uniq(uniqueKeyParam_1[attribute].sort(), true);
+                    paramList_1.push(dataAttribute);
                 }
-                options.data = paramList;
+                options.data = paramList_1;
             }
             else {
                 if (typeof options.data === 'string') {
@@ -179,7 +186,7 @@ var __extends = (this && this.__extends) || function (d, b) {
             }
         };
         return DefaultRequest;
-    })(Request);
+    }(Request));
     exports.DefaultRequest = DefaultRequest;
 });
 //# sourceMappingURL=adapter.js.map

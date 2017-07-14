@@ -1,14 +1,15 @@
-'use strict';
 (function (factory) {
-    if (typeof module === 'object' && typeof module.exports === 'object') {
-        var v = factory(require, exports); if (v !== undefined) module.exports = v;
+    if (typeof module === "object" && typeof module.exports === "object") {
+        var v = factory(require, exports);
+        if (v !== undefined) module.exports = v;
     }
-    else if (typeof define === 'function' && define.amd) {
-        define(["require", "exports", 'backbone', 'underscore'], factory);
+    else if (typeof define === "function" && define.amd) {
+        define(["require", "exports", "backbone", "underscore"], factory);
     }
 })(function (require, exports) {
-    var Backbone = require('backbone');
-    var _ = require('underscore');
+    'use strict';
+    var Backbone = require("backbone");
+    var _ = require("underscore");
     var Controller = (function () {
         function Controller(options, configuration, router) {
             this.options = options || {};
@@ -41,7 +42,7 @@
             return Backbone.Model.extend.apply(this, arguments);
         };
         return Controller;
-    })();
+    }());
     return Controller;
 });
 //# sourceMappingURL=controller.js.map

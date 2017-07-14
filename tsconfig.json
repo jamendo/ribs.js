@@ -4,7 +4,10 @@
         "module": "umd",
         "outDir": "build",
         "sourceMap": true,
-        "declaration": false
+        "declaration": false,
+        "lib": [
+            "dom", "es2015", "es2016"
+        ]
     },
     "files": [
         "source/adapter.ts",

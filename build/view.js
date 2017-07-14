@@ -1,28 +1,35 @@
-'use strict';
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 (function (factory) {
-    if (typeof module === 'object' && typeof module.exports === 'object') {
-        var v = factory(require, exports); if (v !== undefined) module.exports = v;
+    if (typeof module === "object" && typeof module.exports === "object") {
+        var v = factory(require, exports);
+        if (v !== undefined) module.exports = v;
     }
-    else if (typeof define === 'function' && define.amd) {
-        define(["require", "exports", './viewHelper', 'backbone', 'jquery', 'underscore', 'FSPromise'], factory);
+    else if (typeof define === "function" && define.amd) {
+        define(["require", "exports", "./viewHelper", "backbone", "jquery", "underscore", "FSPromise"], factory);
     }
 })(function (require, exports) {
-    var ViewHelper = require('./viewHelper');
-    var Backbone = require('backbone');
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var FSPromise = require('FSPromise');
+    'use strict';
+    var ViewHelper = require("./viewHelper");
+    var Backbone = require("backbone");
+    var $ = require("jquery");
+    var _ = require("underscore");
+    var FSPromise = require("FSPromise");
     var Promise = FSPromise.FSPromise;
     var View = (function (_super) {
         __extends(View, _super);
         function View(options) {
-            _super.call(this, options);
-            this.isDispatch = false;
+            var _this = _super.call(this, options) || this;
+            _this.isDispatch = false;
+            return _this;
         }
         View.prototype.initialize = function (options) {
             this.pendingViewModel = [];
@@ -172,9 +179,9 @@ var __extends = (this && this.__extends) || function (d, b) {
                             _this.updatePromise.abort();
                             _this.updatePromise = null;
                         }
-                        var promiseList = [];
+                        var promiseList_1 = [];
                         _this.collection.models.forEach(function (model) {
-                            promiseList.push(_this.addModel(model));
+                            promiseList_1.push(_this.addModel(model));
                         });
                         var $container = $renderedTemplate.find(_this.options.listSelector);
                         if ($container.length === 0) {
@@ -183,7 +190,7 @@ var __extends = (this && this.__extends) || function (d, b) {
                             }
                         }
                         _this.isCollectionRendered = false;
-                        return Promise.all(promiseList).then(function () {
+                        return Promise.all(promiseList_1).then(function () {
                             _this.isCollectionRendered = true;
                             _this.updateCollection($container);
                             return $renderedTemplate;
@@ -321,6 +328,7 @@ var __extends = (this && this.__extends) || function (d, b) {
                 if (this.options) {
                     if (this.options.removeModelOnClose === true && !!this.collection === true) {
                         this.collection.remove(this.model);
+                        //this.model.collection.remove(this.model);
                     }
                     if (this.options.closeModelOnClose !== false && 'close' in this.model) {
                         this.model.close();
@@ -470,7 +478,14 @@ var __extends = (this && this.__extends) || function (d, b) {
                 var modelView = _this.referenceModelView[_this.options.listSelector][model.cid];
                 $container.append(modelView.$el);
             });
-            $container.css('display', displayCss);
+            if (!displayCss) {
+                $container.each(function (index, elem) {
+                    elem.style.display = ''; // Fix because jQuery doesn't remove inline style display: none if displayMode is null or undefined.
+                });
+            }
+            else {
+                $container.css('display', displayCss);
+            }
         };
         View.prototype.updateCollection = function ($container) {
             var _this = this;
@@ -513,7 +528,14 @@ var __extends = (this && this.__extends) || function (d, b) {
                 this.sortModel($container);
                 this.waitingForSort = false;
             }
-            $container.css('display', displayCss);
+            if (!displayCss) {
+                $container.each(function (index, elem) {
+                    elem.style.display = ''; // Fix because jQuery doesn't remove inline style display: none if displayMode is null or undefined.
+                });
+            }
+            else {
+                $container.css('display', displayCss);
+            }
         };
         View.prototype.addView = function (selector, view) {
             var _this = this;
@@ -529,7 +551,12 @@ var __extends = (this && this.__extends) || function (d, b) {
             else {
                 returnView = this._addView(selector, view);
             }
-            this.$el.css('display', displayMode);
+            if (!displayMode) {
+                this.$el[0].style.display = ''; // Fix because jQuery doesn't remove inline style display: none if displayMode is null or undefined.
+            }
+            else {
+                this.$el.css('display', displayMode);
+            }
             return returnView;
         };
         View.prototype._addView = function (selector, view, $el) {
@@ -553,20 +580,20 @@ var __extends = (this && this.__extends) || function (d, b) {
                 viewToAdd.stopListening(viewToAdd, 'close', _this.destroyViewCallback);
                 viewToAdd.listenToOnce(viewToAdd, 'close', _this.destroyViewCallback);
                 if (viewToAdd.isDispatch === false) {
-                    var $oldEl = viewToAdd.$el;
+                    var $oldEl_1 = viewToAdd.$el;
                     var newCreateView = viewToAdd.create();
                     if (newCreateView instanceof Promise) {
                         return newCreateView.then(function ($renderNewCreate) {
                             // Replace node only if previous element has parent
                             // Avoid some conflict with render override in class which extend Ribs.View
-                            if ($oldEl.parent().length > 0) {
-                                $oldEl.replaceWith($renderNewCreate);
+                            if ($oldEl_1.parent().length > 0) {
+                                $oldEl_1.replaceWith($renderNewCreate);
                             }
                             return $renderNewCreate;
                         });
                     }
                     else {
-                        $oldEl.replaceWith(newCreateView);
+                        $oldEl_1.replaceWith(newCreateView);
                         return newCreateView;
                     }
                 }
@@ -612,7 +639,7 @@ var __extends = (this && this.__extends) || function (d, b) {
             subviewAsyncRender: false
         };
         return View;
-    })(Backbone.View);
+    }(Backbone.View));
     return View;
 });
 //# sourceMappingURL=view.js.map

@@ -1,32 +1,39 @@
-'use strict';
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 (function (factory) {
-    if (typeof module === 'object' && typeof module.exports === 'object') {
-        var v = factory(require, exports); if (v !== undefined) module.exports = v;
+    if (typeof module === "object" && typeof module.exports === "object") {
+        var v = factory(require, exports);
+        if (v !== undefined) module.exports = v;
     }
-    else if (typeof define === 'function' && define.amd) {
-        define(["require", "exports", 'backbone', 'jquery', 'underscore', 'ribsjs'], factory);
+    else if (typeof define === "function" && define.amd) {
+        define(["require", "exports", "backbone", "jquery", "underscore", "ribsjs"], factory);
     }
 })(function (require, exports) {
-    var Backbone = require('backbone');
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var Ribs = require('ribsjs');
+    'use strict';
+    var Backbone = require("backbone");
+    var $ = require("jquery");
+    var _ = require("underscore");
+    var Ribs = require("ribsjs");
     var Model = (function (_super) {
         __extends(Model, _super);
         function Model(attributes, options) {
-            _super.call(this, attributes, options);
-            if (this.options.adapter) {
-                this.adapter = options.adapter;
+            var _this = _super.call(this, attributes, options) || this;
+            if (_this.options.adapter) {
+                _this.adapter = options.adapter;
             }
             else {
-                this.adapter = new Ribs.Adapter.DefaultAdapter();
+                _this.adapter = new Ribs.Adapter.DefaultAdapter();
             }
-            this.isClose = false;
+            _this.isClose = false;
+            return _this;
         }
         Model.prototype.initialize = function (attributes, options) {
             var defaultOptions = {
@@ -65,7 +72,7 @@ var __extends = (this && this.__extends) || function (d, b) {
         Model.prototype.sync = function () {
             var arg = [];
             for (var _i = 0; _i < arguments.length; _i++) {
-                arg[_i - 0] = arguments[_i];
+                arg[_i] = arguments[_i];
             }
             this.adapter.load();
             return _super.prototype.sync.apply(this, arg);
@@ -124,7 +131,7 @@ var __extends = (this && this.__extends) || function (d, b) {
                 _this.stopListening(_this, 'change', selfChangeCallback);
             });
             if (twoWay === true) {
-                var remoteChangeCallback = function () {
+                var remoteChangeCallback_1 = function () {
                     var newValue = {};
                     _.each(model.changed, (function (value, key) {
                         if (key in this.attributes) {
@@ -135,18 +142,18 @@ var __extends = (this && this.__extends) || function (d, b) {
                     _this.set(newValue);
                     _this.lastModelTriggered = null;
                 };
-                this.listenTo(model, 'change', remoteChangeCallback);
+                this.listenTo(model, 'change', remoteChangeCallback_1);
                 model.listenTo(model, 'close:model', function () {
-                    _this.stopListening(model, 'change', remoteChangeCallback);
+                    _this.stopListening(model, 'change', remoteChangeCallback_1);
                 });
             }
             if (keepAlive !== true) {
-                var selfDestroyCallback = function () {
+                var selfDestroyCallback_1 = function () {
                     model.destroy();
                 };
-                this.listenTo(this, 'destroy', selfDestroyCallback);
+                this.listenTo(this, 'destroy', selfDestroyCallback_1);
                 model.listenTo(model, 'close:model', function () {
-                    _this.stopListening(_this, 'destroy', selfDestroyCallback);
+                    _this.stopListening(_this, 'destroy', selfDestroyCallback_1);
                 });
             }
             if (!this.modelSource) {
@@ -158,7 +165,7 @@ var __extends = (this && this.__extends) || function (d, b) {
             return model;
         };
         return Model;
-    })(Backbone.Model);
+    }(Backbone.Model));
     ;
     return Model;
 });
