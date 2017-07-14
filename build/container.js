@@ -1,15 +1,16 @@
-'use strict';
 (function (factory) {
-    if (typeof module === 'object' && typeof module.exports === 'object') {
-        var v = factory(require, exports); if (v !== undefined) module.exports = v;
+    if (typeof module === "object" && typeof module.exports === "object") {
+        var v = factory(require, exports);
+        if (v !== undefined) module.exports = v;
     }
-    else if (typeof define === 'function' && define.amd) {
-        define(["require", "exports", 'underscore', 'jquery', 'FSPromise'], factory);
+    else if (typeof define === "function" && define.amd) {
+        define(["require", "exports", "underscore", "jquery", "FSPromise"], factory);
     }
 })(function (require, exports) {
-    var _ = require('underscore');
-    var $ = require('jquery');
-    var FSPromise = require('FSPromise');
+    'use strict';
+    var _ = require("underscore");
+    var $ = require("jquery");
+    var FSPromise = require("FSPromise");
     var Promise = FSPromise.FSPromise;
     var Container;
     (function (Container) {
@@ -26,15 +27,15 @@
          */
         function dispatch(containerSelector, options) {
             if (containerSelector === undefined) {
-                var promises = [];
+                var promises_1 = [];
                 _.each(containers, function (views, containerSelector) {
                     var dispatchViewResult = dispatchViews(views, containerSelector, options);
                     if (dispatchViewResult instanceof Promise) {
-                        promises.push(dispatchViewResult);
+                        promises_1.push(dispatchViewResult);
                     }
                 });
-                if (promises.length) {
-                    return Promise.all(promises);
+                if (promises_1.length) {
+                    return Promise.all(promises_1);
                 }
             }
             else {

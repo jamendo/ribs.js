@@ -28,16 +28,16 @@ class View extends Backbone.View<Backbone.Model> {
     template;
 
     private pendingViewModel: JQuery[];
-    public pendingViewModelPromise: Thenable<JQuery>[];//readonly
+    public pendingViewModelPromise: PromiseLike<JQuery>[];//readonly
     private waitingForSort: boolean;
     private waitingForUpdateCollection: boolean;
-    protected updatePromise: Thenable<any>;
+    protected updatePromise: PromiseLike<any>;
     private isCollectionRendered: boolean;
     private isSubviewRendered: boolean;
     private $previousEl: JQuery;
     private lastRenderPromise: FSPromise<JQuery>;
     private isCreating: boolean;
-    private createPromise: Thenable<JQuery>;
+    private createPromise: PromiseLike<JQuery>;
 
     protected isClose: Boolean;
 
@@ -103,7 +103,7 @@ class View extends Backbone.View<Backbone.Model> {
 
         let htmlizeObject = this.htmlize();
 
-        let doRender = ($renderedTemplate: JQuery): View|Thenable<View> => {
+        let doRender = ($renderedTemplate: JQuery): View|PromiseLike<View> => {
 
             if (this.isClose) {
                 return this;
@@ -146,7 +146,7 @@ class View extends Backbone.View<Backbone.Model> {
 
             this.lastRenderPromise = htmlizeObject;
 
-            return <any>htmlizeObject.then(doRender);
+            return (htmlizeObject as Promise).then(doRender);
 
         }
 
@@ -161,7 +161,7 @@ class View extends Backbone.View<Backbone.Model> {
         this.$previousEl = this.$el;
         let htmlizeObject = this.htmlize();
 
-        let doRerender = ($renderedTemplate: JQuery): View|Thenable<View> => {
+        let doRerender = ($renderedTemplate: JQuery): View|PromiseLike<View> => {
 
             if (this.isClose) {
                 return this;
@@ -183,14 +183,14 @@ class View extends Backbone.View<Backbone.Model> {
                 this.lastRenderPromise.abort();
             }
             this.lastRenderPromise = htmlizeObject;
-            htmlizeObject.then(doRerender);
+            (htmlizeObject as Promise).then(doRerender);
         } else {
             doRerender(<JQuery>htmlizeObject);
         }
 
     }
 
-    private htmlizeView(): JQuery|Thenable<JQuery> {
+    private htmlizeView(): JQuery|PromiseLike<JQuery> {
 
         let templateKeyValues;
 
@@ -234,12 +234,12 @@ class View extends Backbone.View<Backbone.Model> {
 
     }
 
-    htmlize(): JQuery|Thenable<JQuery> {
+    htmlize(): JQuery|PromiseLike<JQuery> {
 
         // is there a model or templateVariables or nothing?
-        let viewHtml: JQuery|Thenable<JQuery> = this.htmlizeView();
+        let viewHtml: JQuery|PromiseLike<JQuery> = this.htmlizeView();
 
-        let doCollection = ($renderedTemplate: JQuery): JQuery|Thenable<JQuery> => {
+        let doCollection = ($renderedTemplate: JQuery): JQuery|PromiseLike<JQuery> => {
             // and also a collection?
             this.isCollectionRendered = true;
 
@@ -263,7 +263,7 @@ class View extends Backbone.View<Backbone.Model> {
                         this.updatePromise = null;
                     }
 
-                    let promiseList: Thenable<JQuery>[] = [];
+                    let promiseList: PromiseLike<JQuery>[] = [];
 
                     this.collection.models.forEach((model: Ribs.Model) => {
 
@@ -298,7 +298,7 @@ class View extends Backbone.View<Backbone.Model> {
             return $renderedTemplate;
         };
 
-        let doSubView = ($renderedTemplate: JQuery): JQuery|Thenable<JQuery> => {
+        let doSubView = ($renderedTemplate: JQuery): JQuery|PromiseLike<JQuery> => {
 
             this.isSubviewRendered = true;
 
@@ -363,13 +363,13 @@ class View extends Backbone.View<Backbone.Model> {
         };
 
         if (viewHtml instanceof Promise) {
-            return (<Thenable<JQuery>>viewHtml).then(doCollection).then(doSubView);
+            return (<PromiseLike<JQuery>>viewHtml).then(doCollection).then(doSubView);
         }
 
         let doCollectionView = doCollection(<JQuery>viewHtml);
 
         if (doCollectionView instanceof Promise) {
-            return doCollectionView.then(doSubView);
+            return (doCollectionView as Promise).then(doSubView);
         }
 
         return doSubView(<JQuery>doCollectionView);
@@ -520,7 +520,7 @@ class View extends Backbone.View<Backbone.Model> {
 
     }
 
-    create(): JQuery|Thenable<JQuery> {
+    create(): JQuery|PromiseLike<JQuery> {
 
         if (this.isDispatch === true) {
 
@@ -540,7 +540,7 @@ class View extends Backbone.View<Backbone.Model> {
 
             this.isCreating = true;
 
-            return this.createPromise = (<Thenable<View>>renderObject).then((view: View) => {
+            return this.createPromise = (<PromiseLike<View>>renderObject).then((view: View) => {
                 this.isCreating = false;
                 return this.$el;
             });
@@ -624,7 +624,7 @@ class View extends Backbone.View<Backbone.Model> {
 
     }
 
-    private addModel(model: Ribs.Model): Thenable<JQuery> {
+    private addModel(model: Ribs.Model): PromiseLike<JQuery> {
 
         if (this.isCollectionRendered === false) {
             return;
@@ -659,7 +659,7 @@ class View extends Backbone.View<Backbone.Model> {
 
         let viewCreate = modelView.create();
 
-        let doAddModel = ($element: JQuery): JQuery | Thenable<JQuery> => {
+        let doAddModel = ($element: JQuery): JQuery | PromiseLike<JQuery> => {
 
             this.pendingViewModel.push($element);
 
@@ -680,8 +680,8 @@ class View extends Backbone.View<Backbone.Model> {
         }
 
         if (viewCreate instanceof Promise) {
-            this.pendingViewModelPromise.push(viewCreate);
-            return viewCreate.then(doAddModel);
+            this.pendingViewModelPromise.push(viewCreate as Promise);
+            return (viewCreate as Promise).then(doAddModel);
         }
 
         return Promise.resolve(doAddModel(<JQuery>viewCreate));
@@ -741,7 +741,7 @@ class View extends Backbone.View<Backbone.Model> {
         }
 
         // avoid lot of reflow and repaint.
-        let displayCss = $container.css('display');
+        let displayCss = $container.css('display') || '';
         $container.css('display', 'none');
 
         _.each(this.collection.models, (model) => {
@@ -797,7 +797,7 @@ class View extends Backbone.View<Backbone.Model> {
         }
 
         // avoid lot of reflow and repaint.
-        let displayCss = $container.css('display');
+        let displayCss = $container.css('display') || '';
         $container.css('display', 'none');
 
         $container.append(this.pendingViewModel);
@@ -811,12 +811,11 @@ class View extends Backbone.View<Backbone.Model> {
         }
 
         $container.css('display', displayCss);
-
     }
 
     public addView(selector: string|{ [selector: string]: Ribs.View|Ribs.View[] }, view: Ribs.View|Ribs.View[]) {
 
-        let displayMode = this.$el.css('display');// Use css because some time show/hide use not expected display value
+        let displayMode = this.$el.css('display') || '';// Use css because some time show/hide use not expected display value
         this.$el.css('display', 'none');// Don't display to avoid reflow
 
         let returnView;
@@ -839,13 +838,13 @@ class View extends Backbone.View<Backbone.Model> {
 
     }
 
-    private _addView(selector: string, view: Ribs.View|Ribs.View[], $el: JQuery = this.$el): JQuery|Thenable<JQuery>|(JQuery|Thenable<JQuery>)[] {
+    private _addView(selector: string, view: Ribs.View|Ribs.View[], $el: JQuery = this.$el): JQuery|PromiseLike<JQuery>|(JQuery|PromiseLike<JQuery>)[] {
 
         if (!(selector in this.referenceModelView)) {
             this.referenceModelView[selector] = {};
         }
 
-        let doAddView = (viewToAdd: Ribs.View): JQuery|Thenable<JQuery> => {
+        let doAddView = (viewToAdd: Ribs.View): JQuery|PromiseLike<JQuery> => {
 
             this.referenceModelView[selector][viewToAdd.cid] = viewToAdd;
 
@@ -876,7 +875,7 @@ class View extends Backbone.View<Backbone.Model> {
                 let newCreateView = viewToAdd.create();
 
                 if (newCreateView instanceof Promise) {
-                    return newCreateView.then(($renderNewCreate) => {
+                    return (newCreateView as Promise).then(($renderNewCreate) => {
 
                         // Replace node only if previous element has parent
                         // Avoid some conflict with render override in class which extend Ribs.View

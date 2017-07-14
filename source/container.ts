@@ -161,8 +161,8 @@ module Container {
             var viewCreate = view.create();
 
             if (viewCreate instanceof Promise) {
-
-                promises.push(viewCreate.then(doAppend));
+                
+                promises.push((viewCreate as Promise).then(doAppend));
 
             } else {
 

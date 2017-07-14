@@ -1,38 +1,45 @@
-'use strict';
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 (function (factory) {
-    if (typeof module === 'object' && typeof module.exports === 'object') {
-        var v = factory(require, exports); if (v !== undefined) module.exports = v;
+    if (typeof module === "object" && typeof module.exports === "object") {
+        var v = factory(require, exports);
+        if (v !== undefined) module.exports = v;
     }
-    else if (typeof define === 'function' && define.amd) {
-        define(["require", "exports", 'backbone', 'underscore', 'ribsjs'], factory);
+    else if (typeof define === "function" && define.amd) {
+        define(["require", "exports", "backbone", "underscore", "ribsjs"], factory);
     }
 })(function (require, exports) {
-    var Backbone = require('backbone');
-    var _ = require('underscore');
-    var RibsDefinition = require('ribsjs');
+    'use strict';
+    var Backbone = require("backbone");
+    var _ = require("underscore");
+    var RibsDefinition = require("ribsjs");
     var Ribs;
     (function (Ribs) {
         var Collection = (function (_super) {
             __extends(Collection, _super);
             function Collection(models, options) {
-                _super.call(this, models, options);
-                this.collectionSource = null;
-                this._isRange = false;
-                this._currentRange = 0;
-                this._lengthRange = 5;
-                this.isCircularRange = false;
-                this.isClose = false;
-                if (this.options.adapter) {
-                    this.adapter = options.adapter;
+                var _this = _super.call(this, models, options) || this;
+                _this.collectionSource = null;
+                _this._isRange = false;
+                _this._currentRange = 0;
+                _this._lengthRange = 5;
+                _this.isCircularRange = false;
+                _this.isClose = false;
+                if (_this.options.adapter) {
+                    _this.adapter = options.adapter;
                 }
                 else {
-                    this.adapter = new RibsDefinition.Adapter.DefaultAdapter();
+                    _this.adapter = new RibsDefinition.Adapter.DefaultAdapter();
                 }
+                return _this;
             }
             Collection.prototype.initialize = function (models, options) {
                 this.options = options || {};
@@ -47,7 +54,7 @@ var __extends = (this && this.__extends) || function (d, b) {
             Collection.prototype.sync = function () {
                 var arg = [];
                 for (var _i = 0; _i < arguments.length; _i++) {
-                    arg[_i - 0] = arguments[_i];
+                    arg[_i] = arguments[_i];
                 }
                 this.adapter.load();
                 return _super.prototype.sync.apply(this, arg);
@@ -223,6 +230,7 @@ var __extends = (this && this.__extends) || function (d, b) {
                             model.close();
                         }
                     });
+                    //this.models = null;
                 }
             };
             Object.defineProperty(Collection.prototype, "length", {
@@ -259,7 +267,7 @@ var __extends = (this && this.__extends) || function (d, b) {
                 return removed;
             };
             return Collection;
-        })(Backbone.Collection);
+        }(Backbone.Collection));
         Ribs.Collection = Collection;
     })(Ribs || (Ribs = {}));
     return Ribs.Collection;
