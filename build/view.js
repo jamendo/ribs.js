@@ -472,20 +472,13 @@ var __extends = (this && this.__extends) || (function () {
                 }
             }
             // avoid lot of reflow and repaint.
-            var displayCss = $container.css('display');
+            var displayCss = $container.css('display') || '';
             $container.css('display', 'none');
             _.each(this.collection.models, function (model) {
                 var modelView = _this.referenceModelView[_this.options.listSelector][model.cid];
                 $container.append(modelView.$el);
             });
-            if (!displayCss) {
-                $container.each(function (index, elem) {
-                    elem.style.display = ''; // Fix because jQuery doesn't remove inline style display: none if displayMode is null or undefined.
-                });
-            }
-            else {
-                $container.css('display', displayCss);
-            }
+            $container.css('display', displayCss);
         };
         View.prototype.updateCollection = function ($container) {
             var _this = this;
@@ -520,7 +513,7 @@ var __extends = (this && this.__extends) || (function () {
                 }
             }
             // avoid lot of reflow and repaint.
-            var displayCss = $container.css('display');
+            var displayCss = $container.css('display') || '';
             $container.css('display', 'none');
             $container.append(this.pendingViewModel);
             this.pendingViewModel.splice(0, this.pendingViewModel.length);
@@ -528,18 +521,11 @@ var __extends = (this && this.__extends) || (function () {
                 this.sortModel($container);
                 this.waitingForSort = false;
             }
-            if (!displayCss) {
-                $container.each(function (index, elem) {
-                    elem.style.display = ''; // Fix because jQuery doesn't remove inline style display: none if displayMode is null or undefined.
-                });
-            }
-            else {
-                $container.css('display', displayCss);
-            }
+            $container.css('display', displayCss);
         };
         View.prototype.addView = function (selector, view) {
             var _this = this;
-            var displayMode = this.$el.css('display'); // Use css because some time show/hide use not expected display value
+            var displayMode = this.$el.css('display') || ''; // Use css because some time show/hide use not expected display value
             this.$el.css('display', 'none'); // Don't display to avoid reflow
             var returnView;
             if (typeof selector !== 'string') {
@@ -551,12 +537,7 @@ var __extends = (this && this.__extends) || (function () {
             else {
                 returnView = this._addView(selector, view);
             }
-            if (!displayMode) {
-                this.$el[0].style.display = ''; // Fix because jQuery doesn't remove inline style display: none if displayMode is null or undefined.
-            }
-            else {
-                this.$el.css('display', displayMode);
-            }
+            this.$el.css('display', displayMode);
             return returnView;
         };
         View.prototype._addView = function (selector, view, $el) {

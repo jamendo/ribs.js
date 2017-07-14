@@ -741,7 +741,7 @@ class View extends Backbone.View<Backbone.Model> {
         }
 
         // avoid lot of reflow and repaint.
-        let displayCss = $container.css('display');
+        let displayCss = $container.css('display') || '';
         $container.css('display', 'none');
 
         _.each(this.collection.models, (model) => {
@@ -753,14 +753,7 @@ class View extends Backbone.View<Backbone.Model> {
 
         });
 
-        if (!displayCss) {
-            $container.each((index, elem: HTMLElement) => {
-                elem.style.display = ''; // Fix because jQuery doesn't remove inline style display: none if displayMode is null or undefined.
-            });
-        } else {
-            $container.css('display', displayCss);
-        }
-
+        $container.css('display', displayCss);
 
     }
 
@@ -804,7 +797,7 @@ class View extends Backbone.View<Backbone.Model> {
         }
 
         // avoid lot of reflow and repaint.
-        let displayCss = $container.css('display');
+        let displayCss = $container.css('display') || '';
         $container.css('display', 'none');
 
         $container.append(this.pendingViewModel);
@@ -817,18 +810,12 @@ class View extends Backbone.View<Backbone.Model> {
             this.waitingForSort = false;
         }
 
-        if (!displayCss) {
-            $container.each((index, elem: HTMLElement) => {
-                elem.style.display = ''; // Fix because jQuery doesn't remove inline style display: none if displayMode is null or undefined.
-            });
-        } else {
-            $container.css('display', displayCss);
-        }
+        $container.css('display', displayCss);
     }
 
     public addView(selector: string|{ [selector: string]: Ribs.View|Ribs.View[] }, view: Ribs.View|Ribs.View[]) {
 
-        let displayMode = this.$el.css('display');// Use css because some time show/hide use not expected display value
+        let displayMode = this.$el.css('display') || '';// Use css because some time show/hide use not expected display value
         this.$el.css('display', 'none');// Don't display to avoid reflow
 
         let returnView;
@@ -845,11 +832,7 @@ class View extends Backbone.View<Backbone.Model> {
 
         }
 
-        if (!displayMode) {
-            this.$el[0].style.display = ''; // Fix because jQuery doesn't remove inline style display: none if displayMode is null or undefined.
-        } else {
-            this.$el.css('display', displayMode);
-        }
+        this.$el.css('display', displayMode);
 
         return returnView;
 
