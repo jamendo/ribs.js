@@ -4,14 +4,13 @@
         if (v !== undefined) module.exports = v;
     }
     else if (typeof define === "function" && define.amd) {
-        define(["require", "exports", "underscore", "jquery", "FSPromise"], factory);
+        define(["require", "exports", "underscore", "jquery"], factory);
     }
 })(function (require, exports) {
     'use strict';
+    Object.defineProperty(exports, "__esModule", { value: true });
     var _ = require("underscore");
     var $ = require("jquery");
-    var FSPromise = require("FSPromise");
-    var Promise = FSPromise.FSPromise;
     var Container;
     (function (Container) {
         var containers = {};
@@ -138,7 +137,7 @@
                 return Promise.all(promises);
             }
         }
-    })(Container || (Container = {}));
-    return Container;
+    })(Container = exports.Container || (exports.Container = {}));
+    exports.default = Container;
 });
 //# sourceMappingURL=container.js.map

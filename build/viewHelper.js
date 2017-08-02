@@ -8,6 +8,7 @@
     }
 })(function (require, exports) {
     'use strict';
+    Object.defineProperty(exports, "__esModule", { value: true });
     var ViewHelper;
     (function (ViewHelper) {
         var viewHelpers = {};
@@ -25,7 +26,7 @@
         }
         ViewHelper.get = get;
         ;
-    })(ViewHelper || (ViewHelper = {}));
-    return ViewHelper;
+    })(ViewHelper = exports.ViewHelper || (exports.ViewHelper = {}));
+    exports.default = ViewHelper;
 });
 //# sourceMappingURL=viewHelper.js.map

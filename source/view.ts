@@ -1,16 +1,40 @@
 'use strict';
 
-import ViewHelper = require('./viewHelper');
-import Container = require('./container');
-import Backbone = require('backbone');
-import $ = require('jquery');
-import _ = require('underscore');
-import FSPromise = require('FSPromise');
+import ViewHelper from './viewHelper';
+import Container from './container';
+import * as Backbone from 'backbone';
+import * as $ from 'jquery';
+import * as _ from 'underscore';
+import * as FSPromise from 'FSPromise';
 import Promise = FSPromise.FSPromise;
 
-class View extends Backbone.View<Backbone.Model> {
+import * as Ribs from './ribs';
 
-    static defaultOptions: Ribs.ViewOptions = {
+export interface IViewOptions extends Backbone.ViewOptions<Backbone.Model> {
+    /** 
+     * If true, remove model from its collection on view close
+     **/
+    removeModelOnClose?: boolean;
+    reRenderOnChange?: boolean;
+    listSelector?: string;
+    templateVariables?: Object;
+    ModelView?: typeof View;
+    ModelViewOptions?: IViewOptions;
+    collection?: Ribs.Collection;
+    subviewAsyncRender?: boolean;
+    closeModelOnClose?: boolean;
+    closeCollectionOnClose?: boolean;
+    [extra: string]: any;
+}
+
+export interface IViewReference {
+    $html: JQuery;
+    container: Backbone.View<Backbone.Model>;
+}
+
+export class View extends Backbone.View<Backbone.Model> {
+
+    static defaultOptions: Ribs.IViewOptions = {
         removeModelOnClose: true, // Boolean: If true, remove model from its collection on view close
         reRenderOnChange: false,
         listSelector: '.list',
@@ -21,23 +45,23 @@ class View extends Backbone.View<Backbone.Model> {
         closeCollectionOnClose: true,
         subviewAsyncRender: false
     };
-    options: Ribs.ViewOptions;
+    options: Ribs.IViewOptions;
 
     referenceModelView: { [selector: string]: { [cid: string]: Ribs.View } };
     isDispatch: boolean = false;
     template;
 
     private pendingViewModel: JQuery[];
-    public pendingViewModelPromise: PromiseLike<JQuery>[];//readonly
+    public pendingViewModelPromise: Promise<JQuery>[];//readonly
     private waitingForSort: boolean;
     private waitingForUpdateCollection: boolean;
-    protected updatePromise: PromiseLike<any>;
+    protected updatePromise: Promise<any>;
     private isCollectionRendered: boolean;
     private isSubviewRendered: boolean;
     private $previousEl: JQuery;
-    private lastRenderPromise: FSPromise<JQuery>;
+    private lastRenderPromise: Promise<JQuery>;
     private isCreating: boolean;
-    private createPromise: PromiseLike<JQuery>;
+    private createPromise: Promise<JQuery>;
 
     protected isClose: Boolean;
 
@@ -64,7 +88,7 @@ class View extends Backbone.View<Backbone.Model> {
         this.options = $.extend({}, View.defaultOptions, options || {});
 
         this.onInitializeStart();
-            
+
         // collection children views, usefull when collection view gets
         // destroyed and we want to take some action on sub views
         this.referenceModelView = {};
@@ -91,10 +115,10 @@ class View extends Backbone.View<Backbone.Model> {
         this.destroyViewCallback = this.onDestroySubView.bind(this);
 
         this.onInitialize();
-        
+
     }
 
-    render() {
+    render(): View | Promise<View> {
 
         this.onRenderStart();
 
@@ -103,7 +127,7 @@ class View extends Backbone.View<Backbone.Model> {
 
         let htmlizeObject = this.htmlize();
 
-        let doRender = ($renderedTemplate: JQuery): View|PromiseLike<View> => {
+        let doRender = ($renderedTemplate: JQuery): View | Promise<View> => {
 
             if (this.isClose) {
                 return this;
@@ -146,7 +170,7 @@ class View extends Backbone.View<Backbone.Model> {
 
             this.lastRenderPromise = htmlizeObject;
 
-            return (htmlizeObject as Promise).then(doRender);
+            return (htmlizeObject as Promise<JQuery>).then(doRender);
 
         }
 
@@ -161,7 +185,7 @@ class View extends Backbone.View<Backbone.Model> {
         this.$previousEl = this.$el;
         let htmlizeObject = this.htmlize();
 
-        let doRerender = ($renderedTemplate: JQuery): View|PromiseLike<View> => {
+        let doRerender = ($renderedTemplate: JQuery): View | Promise<View> => {
 
             if (this.isClose) {
                 return this;
@@ -183,14 +207,14 @@ class View extends Backbone.View<Backbone.Model> {
                 this.lastRenderPromise.abort();
             }
             this.lastRenderPromise = htmlizeObject;
-            (htmlizeObject as Promise).then(doRerender);
+            (htmlizeObject as Promise<JQuery>).then(doRerender);
         } else {
             doRerender(<JQuery>htmlizeObject);
         }
 
     }
 
-    private htmlizeView(): JQuery|PromiseLike<JQuery> {
+    private htmlizeView(): JQuery | Promise<JQuery> {
 
         let templateKeyValues;
 
@@ -198,7 +222,7 @@ class View extends Backbone.View<Backbone.Model> {
         let postTemplateData = { _view: this };
 
         if (this.model) {
-            
+
             // model view
             // are there also templateVariables
             if (_.keys(this.options.templateVariables).length > 0) {
@@ -218,7 +242,7 @@ class View extends Backbone.View<Backbone.Model> {
             templateKeyValues = $.extend(templateData, ViewHelper.get(), this.options.templateVariables, postTemplateData);
 
         } else {
-                
+
             // basic view
             templateKeyValues = $.extend(templateData, ViewHelper.get(), postTemplateData);
 
@@ -234,17 +258,17 @@ class View extends Backbone.View<Backbone.Model> {
 
     }
 
-    htmlize(): JQuery|PromiseLike<JQuery> {
+    htmlize(): JQuery | Promise<JQuery> {
 
         // is there a model or templateVariables or nothing?
-        let viewHtml: JQuery|PromiseLike<JQuery> = this.htmlizeView();
+        let viewHtml: JQuery | Promise<JQuery> = this.htmlizeView();
 
-        let doCollection = ($renderedTemplate: JQuery): JQuery|PromiseLike<JQuery> => {
+        let doCollection = ($renderedTemplate: JQuery): JQuery | Promise<JQuery> => {
             // and also a collection?
             this.isCollectionRendered = true;
 
             if (this.collection) {
-            
+
                 // for each model of the collection append a modelView to
                 // collection dom
 
@@ -263,7 +287,7 @@ class View extends Backbone.View<Backbone.Model> {
                         this.updatePromise = null;
                     }
 
-                    let promiseList: PromiseLike<JQuery>[] = [];
+                    let promiseList: Promise<JQuery>[] = [];
 
                     this.collection.models.forEach((model: Ribs.Model) => {
 
@@ -298,7 +322,7 @@ class View extends Backbone.View<Backbone.Model> {
             return $renderedTemplate;
         };
 
-        let doSubView = ($renderedTemplate: JQuery): JQuery|PromiseLike<JQuery> => {
+        let doSubView = ($renderedTemplate: JQuery): JQuery | Promise<JQuery> => {
 
             this.isSubviewRendered = true;
 
@@ -363,13 +387,13 @@ class View extends Backbone.View<Backbone.Model> {
         };
 
         if (viewHtml instanceof Promise) {
-            return (<PromiseLike<JQuery>>viewHtml).then(doCollection).then(doSubView);
+            return (<Promise<JQuery>>viewHtml).then(doCollection).then(doSubView);
         }
 
         let doCollectionView = doCollection(<JQuery>viewHtml);
 
         if (doCollectionView instanceof Promise) {
-            return (doCollectionView as Promise).then(doSubView);
+            return (doCollectionView as Promise<JQuery>).then(doSubView);
         }
 
         return doSubView(<JQuery>doCollectionView);
@@ -451,14 +475,14 @@ class View extends Backbone.View<Backbone.Model> {
         // remove the view from dom and stop listening to events that were
         // added with listenTo or that were added to the events declaration
         this.remove();
-        
+
         // unbind events triggered from within views using backbone events
         this.unbind();
-        
+
         this.stopListening();
 
         if (!!this.collection) {
-                
+
             // TODO: ...
 
             if ('close' in this.collection && (!this.options || this.options.closeCollectionOnClose !== false)) {
@@ -480,7 +504,7 @@ class View extends Backbone.View<Backbone.Model> {
                     this.onModelRemoved(modelView);
 
                     modelView.stopListening(modelView, 'close', this.destroyViewCallback);
-                    
+
                     modelView.close();
 
                 });
@@ -496,10 +520,10 @@ class View extends Backbone.View<Backbone.Model> {
 
             if (this.options) {
                 if (this.options.removeModelOnClose === true && !!this.collection === true) {//!!this.model.collection === true) {
-				
+
                     this.collection.remove(this.model);
                     //this.model.collection.remove(this.model);
-				
+
                 }
 
                 if (this.options.closeModelOnClose !== false && 'close' in this.model) {
@@ -520,7 +544,7 @@ class View extends Backbone.View<Backbone.Model> {
 
     }
 
-    create(): JQuery|PromiseLike<JQuery> {
+    create(): JQuery | Promise<JQuery> {
 
         if (this.isDispatch === true) {
 
@@ -540,7 +564,7 @@ class View extends Backbone.View<Backbone.Model> {
 
             this.isCreating = true;
 
-            return this.createPromise = (<PromiseLike<View>>renderObject).then((view: View) => {
+            return this.createPromise = (<Promise<View>>renderObject).then((view: View) => {
                 this.isCreating = false;
                 return this.$el;
             });
@@ -558,9 +582,9 @@ class View extends Backbone.View<Backbone.Model> {
     }
 
     empty() {
-            
+
         //Container.clear(this.options.listSelector);
-            
+
         if (this.referenceModelView !== null) {
 
             _.each(this.referenceModelView, (modelViewList: { [cid: string]: Ribs.View }, selector) => {
@@ -571,7 +595,7 @@ class View extends Backbone.View<Backbone.Model> {
                     this.onModelRemoved(modelView);
 
                     modelView.stopListening(modelView, 'close', this.destroyViewCallback);
-                    
+
                     modelView.close();
 
                 });
@@ -624,7 +648,7 @@ class View extends Backbone.View<Backbone.Model> {
 
     }
 
-    private addModel(model: Ribs.Model): PromiseLike<JQuery> {
+    private addModel(model: Ribs.Model): Promise<JQuery> {
 
         if (this.isCollectionRendered === false) {
             return;
@@ -659,7 +683,7 @@ class View extends Backbone.View<Backbone.Model> {
 
         let viewCreate = modelView.create();
 
-        let doAddModel = ($element: JQuery): JQuery | PromiseLike<JQuery> => {
+        let doAddModel = ($element: JQuery): JQuery | Promise<JQuery> => {
 
             this.pendingViewModel.push($element);
 
@@ -680,15 +704,15 @@ class View extends Backbone.View<Backbone.Model> {
         }
 
         if (viewCreate instanceof Promise) {
-            this.pendingViewModelPromise.push(viewCreate as Promise);
-            return (viewCreate as Promise).then(doAddModel);
+            this.pendingViewModelPromise.push(viewCreate as Promise<JQuery>);
+            return (viewCreate as Promise<JQuery>).then(doAddModel);
         }
 
         return Promise.resolve(doAddModel(<JQuery>viewCreate));
 
     }
 
-    protected formatModelViewOptions(modelViewOptions): Ribs.ViewOptions {
+    protected formatModelViewOptions(modelViewOptions): Ribs.IViewOptions {
         return modelViewOptions;
     }
 
@@ -704,15 +728,15 @@ class View extends Backbone.View<Backbone.Model> {
 
         // TODO: use the container to manage subviews of a list
         //Container.remove(this.options.listSelector, view.container);
-                
+
         delete this.referenceModelView[this.options.listSelector][model.cid];
 
         this.onModelRemoved(view);
 
         view.stopListening(view, 'close', this.destroyViewCallback);
-        
+
         view.close();
-        
+
         return view;
 
     }
@@ -813,7 +837,7 @@ class View extends Backbone.View<Backbone.Model> {
         $container.css('display', displayCss);
     }
 
-    public addView(selector: string|{ [selector: string]: Ribs.View|Ribs.View[] }, view: Ribs.View|Ribs.View[]) {
+    public addView(selector: string | { [selector: string]: Ribs.View | Ribs.View[] }, view: Ribs.View | Ribs.View[]) {
 
         let displayMode = this.$el.css('display') || '';// Use css because some time show/hide use not expected display value
         this.$el.css('display', 'none');// Don't display to avoid reflow
@@ -838,13 +862,13 @@ class View extends Backbone.View<Backbone.Model> {
 
     }
 
-    private _addView(selector: string, view: Ribs.View|Ribs.View[], $el: JQuery = this.$el): JQuery|PromiseLike<JQuery>|(JQuery|PromiseLike<JQuery>)[] {
+    private _addView(selector: string, view: Ribs.View | Ribs.View[], $el: JQuery = this.$el): JQuery | Promise<JQuery> | (JQuery | Promise<JQuery>)[] {
 
         if (!(selector in this.referenceModelView)) {
             this.referenceModelView[selector] = {};
         }
 
-        let doAddView = (viewToAdd: Ribs.View): JQuery|PromiseLike<JQuery> => {
+        let doAddView = (viewToAdd: Ribs.View): JQuery | Promise<JQuery> => {
 
             this.referenceModelView[selector][viewToAdd.cid] = viewToAdd;
 
@@ -875,7 +899,7 @@ class View extends Backbone.View<Backbone.Model> {
                 let newCreateView = viewToAdd.create();
 
                 if (newCreateView instanceof Promise) {
-                    return (newCreateView as Promise).then(($renderNewCreate) => {
+                    return (newCreateView as Promise<JQuery>).then(($renderNewCreate) => {
 
                         // Replace node only if previous element has parent
                         // Avoid some conflict with render override in class which extend Ribs.View
@@ -936,4 +960,4 @@ class View extends Backbone.View<Backbone.Model> {
 
 }
 
-export = View;
+export default View;

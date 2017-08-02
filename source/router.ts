@@ -1,10 +1,10 @@
 'use strict';
 
-import EventsManager = require('./eventsManager');
-import Backbone = require('backbone');
-import _ = require('underscore');
+import EventsManager from './eventsManager';
+import * as Backbone from 'backbone';
+import * as _ from 'underscore';
 
-class Router extends Backbone.Router {
+export class Router extends Backbone.Router {
 
     constructor(options?: Backbone.RouterOptions) {
         super(options);
@@ -16,7 +16,7 @@ class Router extends Backbone.Router {
 
     routes: {};
 
-    route (route, name, callback) {
+    route (route: string|RegExp, name: string, callback: Function) {
 
         if (!_.isRegExp(route)) route = (<any>this)._routeToRegExp(route);
 
@@ -29,7 +29,7 @@ class Router extends Backbone.Router {
 
         if (!callback) callback = this[name];
 
-        Backbone.history.route(route, (fragment) => {
+        Backbone.history.route(route as string, (fragment) => {
 
             var args = (<any>this)._extractParameters(route, fragment);
                 
@@ -63,7 +63,7 @@ class Router extends Backbone.Router {
 
     }
 
-    execute (callback, routeArguments, routeName, internalCallback) {
+    execute (callback: Function, routeArguments: Array<any>, routeName: string, internalCallback?: Function) {
             
         // pre-route event
         EventsManager.trigger(EventsManager.constants.ROUTER_PREROUTE, { 'routeArguments': routeArguments, 'routeName': routeName });
@@ -96,4 +96,4 @@ class Router extends Backbone.Router {
 
 }
 
-export = Router;
+export default Router;
