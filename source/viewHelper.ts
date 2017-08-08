@@ -1,6 +1,6 @@
 'use strict';
 
-module ViewHelper {
+export module ViewHelper {
 	
     var viewHelpers = {};
     
@@ -24,4 +24,4 @@ module ViewHelper {
 
 }
 
-export = ViewHelper;
+export default ViewHelper;

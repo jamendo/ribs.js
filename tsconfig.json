@@ -4,10 +4,12 @@
         "module": "umd",
         "outDir": "build",
         "sourceMap": true,
-        "declaration": false,
+        "declaration": true,
+        "declarationDir": "./typings/",
         "lib": [
             "dom", "es2015", "es2016"
-        ]
+        ],
+        "moduleResolution": "node"
     },
     "files": [
         "source/adapter.ts",

@@ -1,16 +1,21 @@
 'use strict';
 
-import Backbone = require('backbone');
-import $ = require('jquery');
-import _ = require('underscore');
-import Ribs = require('ribsjs');
+import * as Backbone from 'backbone';
+import * as $ from 'jquery';
+import * as _ from 'underscore';
+import * as Ribs from './ribs';
 
-class Model extends Backbone.Model {
+export interface IModelOptions extends Backbone.ModelFetchOptions {
+    adapter?: Ribs.Adapter.Adapter;
+    closeModelOnDestroy?: boolean;
+}
+
+export class Model extends Backbone.Model {
 
     public adapter: Ribs.Adapter.Adapter;
     protected isClose: Boolean;
 
-    constructor(attributes, options?: Ribs.ModelOptions) {
+    constructor(attributes, options?: Ribs.IModelOptions) {
         super(attributes, options);
         if (this.options.adapter) {
             this.adapter = options.adapter;
@@ -21,7 +26,7 @@ class Model extends Backbone.Model {
         this.isClose = false;
     }
 
-    initialize (attributes, options) {
+    initialize(attributes, options) {
 
         var defaultOptions = {
             virtualAttributes: []
@@ -57,7 +62,7 @@ class Model extends Backbone.Model {
             return;
         }
         this.close();
-    } 
+    }
 
     close() {
         this.off('destroy', this.onDestroy, this);
@@ -76,7 +81,7 @@ class Model extends Backbone.Model {
         return super.sync.apply(this, arg);
     }
 
-    get (attribute) {
+    get(attribute) {
 
         if (typeof this[attribute] === 'function') {
 
@@ -90,7 +95,7 @@ class Model extends Backbone.Model {
 
     }
 
-    toJSON () {
+    toJSON() {
 
         var attributes = Backbone.Model.prototype.toJSON.call(this);
 
@@ -221,4 +226,4 @@ class Model extends Backbone.Model {
 
 };
 
-export = Model;
+export default Model;

@@ -1,15 +1,19 @@
 'use strict';
 
-import _ = require('underscore');
-import $ = require('jquery');
-import FSPromise = require('FSPromise');
-import Promise = FSPromise.FSPromise;
+import * as _ from 'underscore';
+import * as $ from 'jquery';
 
-module Container {
+import * as Ribs from './ribs';
+
+export interface IContainerOptions {
+    insertMode?: string
+}
+
+export module Container {
 
     var containers: { [selector: string]: Ribs.View[] } = {};
     var bodyElement: JQuery = $('body');
-        
+
     /**
      * 
      * dispatch the views of all the container or by a container selector
@@ -19,13 +23,13 @@ module Container {
      * 
      * @returns Promise<void>
      */
-    export function dispatch(containerSelector?: string, options?: Ribs.ContainerOptions): Promise<any>|void {
+    export function dispatch(containerSelector?: string, options?: Ribs.IContainerOptions): Promise<any> | void {
 
         if (containerSelector === undefined) {
 
             let promises: Promise<any>[] = [];
 
-            _.each(containers, function(views, containerSelector) {
+            _.each(containers, function (views, containerSelector) {
 
                 let dispatchViewResult = dispatchViews(views, containerSelector, options);
 
@@ -68,7 +72,7 @@ module Container {
         containers[containerSelector].push(view);
 
     }
-        
+
     /**
      * 
      * remove a view from the list, for a given selector
@@ -86,13 +90,13 @@ module Container {
             return;
 
         }
-            
+
         var indexOf = containers[containerSelector].indexOf(view);
-            
+
         if (indexOf > -1) {
-                
+
             containers[containerSelector].splice(indexOf, 1);
-                
+
         }
 
     }
@@ -119,7 +123,7 @@ module Container {
         delete containers[containerSelector];
 
     }
-    
+
     /**
      * 
      * (private) dispatch the views
@@ -130,7 +134,7 @@ module Container {
      * 
      * @returns {undefined}
      */
-    function dispatchViews(views: Ribs.View[], containerSelector: string, options: Ribs.ContainerOptions): Promise<any>|void {
+    function dispatchViews(views: Ribs.View[], containerSelector: string, options: Ribs.IContainerOptions): Promise<any> | void {
 
         let promises: Promise<any>[] = [];
 
@@ -161,8 +165,8 @@ module Container {
             var viewCreate = view.create();
 
             if (viewCreate instanceof Promise) {
-                
-                promises.push((viewCreate as Promise).then(doAppend));
+
+                promises.push((viewCreate as Promise<any>).then(doAppend));
 
             } else {
 
@@ -176,9 +180,9 @@ module Container {
         if (promises.length) {
             return Promise.all(promises);
         }
-        
+
     }
 
 }
 
-export = Container;
+export default Container;

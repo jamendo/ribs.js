@@ -1,9 +1,9 @@
 'use strict';
 
-import Backbone = require('backbone');
-import _ = require('underscore');
+import * as Backbone from 'backbone';
+import * as _ from 'underscore';
 
-class Controller {
+export class Controller {
 
     options: any;
     router: Backbone.Router;
@@ -54,4 +54,4 @@ class Controller {
 
 }
 
-export = Controller;
+export default Controller;

@@ -8,6 +8,7 @@
     }
 })(function (require, exports) {
     'use strict';
+    Object.defineProperty(exports, "__esModule", { value: true });
     var Backbone = require("backbone");
     var _ = require("underscore");
     var Controller = (function () {
@@ -43,6 +44,7 @@
         };
         return Controller;
     }());
-    return Controller;
+    exports.Controller = Controller;
+    exports.default = Controller;
 });
 //# sourceMappingURL=controller.js.map

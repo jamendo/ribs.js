@@ -14,16 +14,18 @@ var __extends = (this && this.__extends) || (function () {
         if (v !== undefined) module.exports = v;
     }
     else if (typeof define === "function" && define.amd) {
-        define(["require", "exports", "./viewHelper", "backbone", "jquery", "underscore", "FSPromise"], factory);
+        define(["require", "exports", "./viewHelper", "backbone", "jquery", "underscore", "FSPromise", "./ribs"], factory);
     }
 })(function (require, exports) {
     'use strict';
-    var ViewHelper = require("./viewHelper");
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var viewHelper_1 = require("./viewHelper");
     var Backbone = require("backbone");
     var $ = require("jquery");
     var _ = require("underscore");
     var FSPromise = require("FSPromise");
     var Promise = FSPromise.FSPromise;
+    var Ribs = require("./ribs");
     var View = (function (_super) {
         __extends(View, _super);
         function View(options) {
@@ -136,19 +138,19 @@ var __extends = (this && this.__extends) || (function () {
                 // model view
                 // are there also templateVariables
                 if (_.keys(this.options.templateVariables).length > 0) {
-                    templateKeyValues = $.extend(templateData, ViewHelper.get(), this.options.templateVariables, this.getModelAsJson(), postTemplateData);
+                    templateKeyValues = $.extend(templateData, viewHelper_1.default.get(), this.options.templateVariables, this.getModelAsJson(), postTemplateData);
                 }
                 else {
-                    templateKeyValues = $.extend(templateData, ViewHelper.get(), this.getModelAsJson(), postTemplateData);
+                    templateKeyValues = $.extend(templateData, viewHelper_1.default.get(), this.getModelAsJson(), postTemplateData);
                 }
             }
             else if (_.keys(this.options.templateVariables).length > 0) {
                 // templateVariables view
-                templateKeyValues = $.extend(templateData, ViewHelper.get(), this.options.templateVariables, postTemplateData);
+                templateKeyValues = $.extend(templateData, viewHelper_1.default.get(), this.options.templateVariables, postTemplateData);
             }
             else {
                 // basic view
-                templateKeyValues = $.extend(templateData, ViewHelper.get(), postTemplateData);
+                templateKeyValues = $.extend(templateData, viewHelper_1.default.get(), postTemplateData);
             }
             var templateResult = this.template(templateKeyValues);
             if (templateResult instanceof Promise) {
@@ -621,6 +623,7 @@ var __extends = (this && this.__extends) || (function () {
         };
         return View;
     }(Backbone.View));
-    return View;
+    exports.View = View;
+    exports.default = View;
 });
 //# sourceMappingURL=view.js.map

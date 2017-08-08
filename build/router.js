@@ -18,7 +18,8 @@ var __extends = (this && this.__extends) || (function () {
     }
 })(function (require, exports) {
     'use strict';
-    var EventsManager = require("./eventsManager");
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var eventsManager_1 = require("./eventsManager");
     var Backbone = require("backbone");
     var _ = require("underscore");
     var Router = (function (_super) {
@@ -63,11 +64,11 @@ var __extends = (this && this.__extends) || (function () {
         };
         Router.prototype.execute = function (callback, routeArguments, routeName, internalCallback) {
             // pre-route event
-            EventsManager.trigger(EventsManager.constants.ROUTER_PREROUTE, { 'routeArguments': routeArguments, 'routeName': routeName });
+            eventsManager_1.default.trigger(eventsManager_1.default.constants.ROUTER_PREROUTE, { 'routeArguments': routeArguments, 'routeName': routeName });
             if (callback)
                 callback.apply(this, routeArguments);
             // post route event
-            EventsManager.trigger(EventsManager.constants.ROUTER_POSTROUTE, { 'routeArguments': routeArguments, 'routeName': routeName });
+            eventsManager_1.default.trigger(eventsManager_1.default.constants.ROUTER_POSTROUTE, { 'routeArguments': routeArguments, 'routeName': routeName });
             if (internalCallback !== undefined) {
                 // can return true or false, if false is returned the current
                 // route will get aborted
@@ -84,6 +85,7 @@ var __extends = (this && this.__extends) || (function () {
         };
         return Router;
     }(Backbone.Router));
-    return Router;
+    exports.Router = Router;
+    exports.default = Router;
 });
 //# sourceMappingURL=router.js.map

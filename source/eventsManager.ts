@@ -1,9 +1,9 @@
 'use strict';
 
-import Backbone = require('backbone');
-import _ = require('underscore');
+import * as Backbone from 'backbone';
+import * as _ from 'underscore';
 
-class EventsManager {
+class CEventsManager {
 
     constructor() { }
 
@@ -17,4 +17,6 @@ class EventsManager {
 
 }
 
-export = _.extend(new EventsManager(), Backbone.Events);
+export const EventsManager = _.extend(new CEventsManager(), Backbone.Events);
+
+export default EventsManager;

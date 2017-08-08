@@ -14,14 +14,15 @@ var __extends = (this && this.__extends) || (function () {
         if (v !== undefined) module.exports = v;
     }
     else if (typeof define === "function" && define.amd) {
-        define(["require", "exports", "backbone", "jquery", "underscore", "ribsjs"], factory);
+        define(["require", "exports", "backbone", "jquery", "underscore", "./ribs"], factory);
     }
 })(function (require, exports) {
     'use strict';
+    Object.defineProperty(exports, "__esModule", { value: true });
     var Backbone = require("backbone");
     var $ = require("jquery");
     var _ = require("underscore");
-    var Ribs = require("ribsjs");
+    var Ribs = require("./ribs");
     var Model = (function (_super) {
         __extends(Model, _super);
         function Model(attributes, options) {
@@ -166,7 +167,8 @@ var __extends = (this && this.__extends) || (function () {
         };
         return Model;
     }(Backbone.Model));
+    exports.Model = Model;
     ;
-    return Model;
+    exports.default = Model;
 });
 //# sourceMappingURL=model.js.map
