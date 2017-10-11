@@ -11,7 +11,7 @@
     Object.defineProperty(exports, "__esModule", { value: true });
     var Backbone = require("backbone");
     var _ = require("underscore");
-    var CEventsManager = (function () {
+    var CEventsManager = /** @class */ (function () {
         function CEventsManager() {
             this.constants = {
                 // router

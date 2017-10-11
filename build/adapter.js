@@ -24,7 +24,7 @@ var __extends = (this && this.__extends) || (function () {
     var _ = require("underscore");
     var Adapter;
     (function (Adapter_1) {
-        var Request = (function () {
+        var Request = /** @class */ (function () {
             function Request(options) {
                 if (options === void 0) { options = { data: null, type: 'GET', url: '' }; }
                 this.options = this.formatOptions(options);
@@ -41,7 +41,7 @@ var __extends = (this && this.__extends) || (function () {
             return Request;
         }());
         Adapter_1.Request = Request;
-        var Adapter = (function () {
+        var Adapter = /** @class */ (function () {
             function Adapter(options) {
                 if (options === void 0) { options = {}; }
                 this.options = this.formatOptions(options);
@@ -60,7 +60,7 @@ var __extends = (this && this.__extends) || (function () {
             return Adapter;
         }());
         Adapter_1.Adapter = Adapter;
-        var DefaultAdapter = (function (_super) {
+        var DefaultAdapter = /** @class */ (function (_super) {
             __extends(DefaultAdapter, _super);
             function DefaultAdapter() {
                 return _super !== null && _super.apply(this, arguments) || this;
@@ -75,7 +75,7 @@ var __extends = (this && this.__extends) || (function () {
         Adapter_1.DefaultAdapter = DefaultAdapter;
         ;
         ;
-        var DefaultRequest = (function (_super) {
+        var DefaultRequest = /** @class */ (function (_super) {
             __extends(DefaultRequest, _super);
             function DefaultRequest(options) {
                 var _this = _super.call(this, options) || this;

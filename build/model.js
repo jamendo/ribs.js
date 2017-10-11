@@ -23,7 +23,7 @@ var __extends = (this && this.__extends) || (function () {
     var $ = require("jquery");
     var _ = require("underscore");
     var Ribs = require("./ribs");
-    var Model = (function (_super) {
+    var Model = /** @class */ (function (_super) {
         __extends(Model, _super);
         function Model(attributes, options) {
             var _this = _super.call(this, attributes, options) || this;

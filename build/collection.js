@@ -22,7 +22,7 @@ var __extends = (this && this.__extends) || (function () {
     var Backbone = require("backbone");
     var _ = require("underscore");
     var Ribs = require("./ribs");
-    var Collection = (function (_super) {
+    var Collection = /** @class */ (function (_super) {
         __extends(Collection, _super);
         function Collection(models, options) {
             var _this = _super.call(this, models, options) || this;

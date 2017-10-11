@@ -22,7 +22,7 @@ var __extends = (this && this.__extends) || (function () {
     var eventsManager_1 = require("./eventsManager");
     var Backbone = require("backbone");
     var _ = require("underscore");
-    var Router = (function (_super) {
+    var Router = /** @class */ (function (_super) {
         __extends(Router, _super);
         function Router(options) {
             return _super.call(this, options) || this;

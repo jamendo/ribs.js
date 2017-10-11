@@ -51,7 +51,7 @@ export declare class View extends Backbone.View<Backbone.Model> {
     constructor(options?: any);
     initialize(options: any): void;
     render(): View | Promise<View>;
-    reRenderModelView(): void;
+    reRenderModelView(): View | FSPromise.FSPromise<View>;
     private htmlizeView();
     htmlize(): JQuery | Promise<JQuery>;
     getModelAsJson(): any;

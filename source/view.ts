@@ -207,9 +207,9 @@ export class View extends Backbone.View<Backbone.Model> {
                 this.lastRenderPromise.abort();
             }
             this.lastRenderPromise = htmlizeObject;
-            (htmlizeObject as Promise<JQuery>).then(doRerender);
+            return (htmlizeObject as Promise<JQuery>).then(doRerender);
         } else {
-            doRerender(<JQuery>htmlizeObject);
+            return doRerender(<JQuery>htmlizeObject);
         }
 
     }

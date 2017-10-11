@@ -26,7 +26,7 @@ var __extends = (this && this.__extends) || (function () {
     var FSPromise = require("FSPromise");
     var Promise = FSPromise.FSPromise;
     var Ribs = require("./ribs");
-    var View = (function (_super) {
+    var View = /** @class */ (function (_super) {
         __extends(View, _super);
         function View(options) {
             var _this = _super.call(this, options) || this;
@@ -124,10 +124,10 @@ var __extends = (this && this.__extends) || (function () {
                     this.lastRenderPromise.abort();
                 }
                 this.lastRenderPromise = htmlizeObject;
-                htmlizeObject.then(doRerender);
+                return htmlizeObject.then(doRerender);
             }
             else {
-                doRerender(htmlizeObject);
+                return doRerender(htmlizeObject);
             }
         };
         View.prototype.htmlizeView = function () {

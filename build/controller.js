@@ -11,7 +11,7 @@
     Object.defineProperty(exports, "__esModule", { value: true });
     var Backbone = require("backbone");
     var _ = require("underscore");
-    var Controller = (function () {
+    var Controller = /** @class */ (function () {
         function Controller(options, configuration, router) {
             this.options = options || {};
             this.router = router || new Backbone.Router();
