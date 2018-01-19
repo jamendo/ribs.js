@@ -10,12 +10,12 @@ export interface IModelOptions extends Backbone.ModelFetchOptions {
     closeModelOnDestroy?: boolean;
 }
 
-export class Model extends Backbone.Model {
+class Model<TAttr extends {} = {}> extends Backbone.Model {
 
     public adapter: Ribs.Adapter.Adapter;
     protected isClose: Boolean;
 
-    constructor(attributes, options?: Ribs.IModelOptions) {
+    constructor(attributes: TAttr, options?) {
         super(attributes, options);
         if (this.options.adapter) {
             this.adapter = options.adapter;
@@ -26,7 +26,7 @@ export class Model extends Backbone.Model {
         this.isClose = false;
     }
 
-    initialize(attributes, options) {
+    initialize (attributes: TAttr, options) {
 
         var defaultOptions = {
             virtualAttributes: []
@@ -81,11 +81,11 @@ export class Model extends Backbone.Model {
         return super.sync.apply(this, arg);
     }
 
-    get(attribute) {
+    get<K extends keyof TAttr>(attribute: K): TAttr[K] {
 
-        if (typeof this[attribute] === 'function') {
+        if (typeof (<any>this)[attribute] === 'function') {
 
-            return this[attribute]();
+            return (<any>this)[attribute]();
 
         } else {
 
@@ -93,6 +93,10 @@ export class Model extends Backbone.Model {
 
         }
 
+    }
+
+    set<K extends keyof TAttr>(attribute: K, value: TAttr[K]) {
+        return super.set(attribute);
     }
 
     toJSON() {
