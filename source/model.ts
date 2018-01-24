@@ -10,7 +10,7 @@ export interface IModelOptions extends Backbone.ModelFetchOptions {
     closeModelOnDestroy?: boolean;
 }
 
-class Model<TAttr extends {} = {}> extends Backbone.Model {
+class Model<TAttr extends {} = { [attr: string]: any; }> extends Backbone.Model {
 
     public adapter: Ribs.Adapter.Adapter;
     protected isClose: Boolean;

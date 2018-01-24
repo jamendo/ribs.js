@@ -6,7 +6,7 @@ export interface IModelOptions extends Backbone.ModelFetchOptions {
     adapter?: Ribs.Adapter.Adapter;
     closeModelOnDestroy?: boolean;
 }
-export declare class Model<TAttr extends {} = {}> extends Backbone.Model {
+export declare class Model<TAttr extends {} = { [attr: string]: any; }> extends Backbone.Model {
     adapter: Ribs.Adapter.Adapter;
     protected isClose: Boolean;
     constructor(attributes: TAttr, options?: Ribs.IModelOptions);
