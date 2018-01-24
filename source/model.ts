@@ -95,8 +95,10 @@ class Model<TAttr extends {} = {}> extends Backbone.Model {
 
     }
 
-    set<K extends keyof TAttr>(attribute: K, value: TAttr[K]) {
-        return super.set(attribute);
+    set(obj: Partial<TAttr>, options?: Backbone.ModelSetOptions): Backbone.Model;
+    set<K extends keyof TAttr>(attribute: K, value: TAttr[K]): Backbone.Model;
+    set<K extends keyof TAttr>(attributeOrObj: any, valueOrOptions: any): Backbone.Model {
+        return super.set(attributeOrObj, valueOrOptions);
     }
 
     toJSON() {

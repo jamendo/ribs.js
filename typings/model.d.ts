@@ -15,6 +15,7 @@ export declare class Model<TAttr extends {} = {}> extends Backbone.Model {
     close(): void;
     sync(...arg: any[]): JQueryXHR;
     get<K extends keyof TAttr>(attribute: K): TAttr[K];
+    set(obj: Partial<TAttr>, options?: Backbone.ModelSetOptions): Backbone.Model;
     set<K extends keyof TAttr>(attribute: K, value: TAttr[K]): Backbone.Model;
     toJSON(): any;
     /**
