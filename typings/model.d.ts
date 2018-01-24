@@ -6,15 +6,16 @@ export interface IModelOptions extends Backbone.ModelFetchOptions {
     adapter?: Ribs.Adapter.Adapter;
     closeModelOnDestroy?: boolean;
 }
-export declare class Model extends Backbone.Model {
+export declare class Model<TAttr extends {} = {}> extends Backbone.Model {
     adapter: Ribs.Adapter.Adapter;
     protected isClose: Boolean;
-    constructor(attributes: any, options?: Ribs.IModelOptions);
-    initialize(attributes: any, options: any): void;
+    constructor(attributes: TAttr, options?: Ribs.IModelOptions);
+    initialize(attributes: TAttr, options: any): void;
     private onDestroy();
     close(): void;
     sync(...arg: any[]): JQueryXHR;
-    get(attribute: any): any;
+    get<K extends keyof TAttr>(attribute: K): TAttr[K];
+    set<K extends keyof TAttr>(attribute: K, value: TAttr[K]): Backbone.Model;
     toJSON(): any;
     /**
      * Get a projection of the model. The model return will be sync with this current model.
