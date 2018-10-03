@@ -12,11 +12,11 @@ export interface ICollectionOptions extends Backbone.CollectionFetchOptions {
     reset?: boolean;
 }
 
-export class Collection<T extends Model = Model> extends Backbone.Collection<T> {
+export class Collection extends Backbone.Collection<Model> {
 
     options: Ribs.ICollectionOptions;
     onInitialize;
-    collectionSource: Collection<T> = null;
+    collectionSource: Collection = null;
     _isRange: boolean = false;
     _currentRange: number = 0;
     _lengthRange: number = 5;

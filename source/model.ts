@@ -11,17 +11,17 @@ export interface IModelOptions extends Backbone.ModelFetchOptions {
     closeModelOnDestroy?: boolean;
 }
 
-export interface TModelAttributes {
+export interface IModelAttributes {
     [attr: string]: any;
 }
 
-export class Model<TAttr extends TModelAttributes = TModelAttributes> extends Backbone.Model {
+export class Model<TAttr extends IModelAttributes = IModelAttributes> extends Backbone.Model {
 
     public adapter: Ribs.Adapter.Adapter;
     protected isClose: Boolean;
 
     attributes: TAttr;
-    collection: Collection<this>;
+    collection: Collection;
 
     constructor(attributes: TAttr, options?) {
         super(attributes, options);

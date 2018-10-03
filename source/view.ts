@@ -10,7 +10,7 @@ import Promise = FSPromise.FSPromise;
 import { Collection } from './collection';
 import Model from './model';
 
-export interface IViewOptions<T extends Model = Model> extends Backbone.ViewOptions<T> {
+export interface IViewOptions extends Backbone.ViewOptions<Model> {
     /** 
      * If true, remove model from its collection on view close
      **/
@@ -32,7 +32,7 @@ export interface IViewReference {
     container: Backbone.View<Backbone.Model>;
 }
 
-export class View<T extends Model = Model> extends Backbone.View<T> {
+export class View extends Backbone.View<Model> {
 
     static defaultOptions: IViewOptions = {
         removeModelOnClose: true, // Boolean: If true, remove model from its collection on view close
@@ -68,7 +68,7 @@ export class View<T extends Model = Model> extends Backbone.View<T> {
     private removeModelCallback: (model: Model) => any;
     private destroyViewCallback: (model: Model) => any;
 
-    public collection: Collection<T>;
+    public collection: Collection;
 
     constructor(options?) {
         super(options);
@@ -120,7 +120,7 @@ export class View<T extends Model = Model> extends Backbone.View<T> {
 
     }
 
-    render(): View<T> | Promise<View<T>> {
+    render(): View | Promise<View> {
 
         this.onRenderStart();
 
@@ -129,7 +129,7 @@ export class View<T extends Model = Model> extends Backbone.View<T> {
 
         let htmlizeObject = this.htmlize();
 
-        let doRender = ($renderedTemplate: JQuery): View<T> | Promise<View<T>> => {
+        let doRender = ($renderedTemplate: JQuery): View | Promise<View> => {
 
             if (this.isClose) {
                 return this;

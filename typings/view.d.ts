@@ -4,7 +4,7 @@ import * as FSPromise from 'FSPromise';
 import Promise = FSPromise.FSPromise;
 import { Collection } from './collection';
 import Model from './model';
-export interface IViewOptions<T extends Model = Model> extends Backbone.ViewOptions<T> {
+export interface IViewOptions extends Backbone.ViewOptions<Model> {
     /**
      * If true, remove model from its collection on view close
      **/
@@ -24,7 +24,7 @@ export interface IViewReference {
     $html: JQuery;
     container: Backbone.View<Backbone.Model>;
 }
-export declare class View<T extends Model = Model> extends Backbone.View<T> {
+export declare class View extends Backbone.View<Model> {
     static defaultOptions: IViewOptions;
     options: IViewOptions;
     referenceModelView: {
@@ -48,11 +48,11 @@ export declare class View<T extends Model = Model> extends Backbone.View<T> {
     protected isClose: Boolean;
     private removeModelCallback;
     private destroyViewCallback;
-    collection: Collection<T>;
+    collection: Collection;
     constructor(options?: any);
     initialize(options: any): void;
-    render(): View<T> | Promise<View<T>>;
-    reRenderModelView(): View<Model<import("./model").TModelAttributes>> | FSPromise.FSPromise<View<Model<import("./model").TModelAttributes>>>;
+    render(): View | Promise<View>;
+    reRenderModelView(): View | FSPromise.FSPromise<View>;
     private htmlizeView;
     htmlize(): JQuery | Promise<JQuery>;
     getModelAsJson(): any;

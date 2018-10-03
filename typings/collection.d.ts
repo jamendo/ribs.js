@@ -7,10 +7,10 @@ export interface ICollectionOptions extends Backbone.CollectionFetchOptions {
     comparator?: string | Function;
     reset?: boolean;
 }
-export declare class Collection<T extends Model = Model> extends Backbone.Collection<T> {
+export declare class Collection extends Backbone.Collection<Model> {
     options: Ribs.ICollectionOptions;
     onInitialize: any;
-    collectionSource: Collection<T>;
+    collectionSource: Collection;
     _isRange: boolean;
     _currentRange: number;
     _lengthRange: number;
@@ -21,8 +21,8 @@ export declare class Collection<T extends Model = Model> extends Backbone.Collec
     initialize(models: any, options: any): void;
     batchSave(): void;
     sync(...arg: any[]): JQueryXHR;
-    getFilteredCollection(onlyDatas: any, notDatas: any): Ribs.Collection<Ribs.Model<Ribs.TModelAttributes>>;
-    getRange(start: any, length: any): Ribs.Collection<Ribs.Model<Ribs.TModelAttributes>>;
+    getFilteredCollection(onlyDatas: any, notDatas: any): Ribs.Collection;
+    getRange(start: any, length: any): Ribs.Collection;
     setIsCircularRange(isCircularRange: any): this;
     rangeNext(): this;
     rangeNextPage(): this;
