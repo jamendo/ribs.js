@@ -1,7 +1,10 @@
 var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    }
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -14,18 +17,18 @@ var __extends = (this && this.__extends) || (function () {
         if (v !== undefined) module.exports = v;
     }
     else if (typeof define === "function" && define.amd) {
-        define(["require", "exports", "./viewHelper", "backbone", "jquery", "underscore", "FSPromise", "./ribs"], factory);
+        define(["require", "exports", "./viewHelper", "./container", "backbone", "jquery", "underscore", "FSPromise"], factory);
     }
 })(function (require, exports) {
     'use strict';
     Object.defineProperty(exports, "__esModule", { value: true });
     var viewHelper_1 = require("./viewHelper");
+    var container_1 = require("./container");
     var Backbone = require("backbone");
     var $ = require("jquery");
     var _ = require("underscore");
     var FSPromise = require("FSPromise");
     var Promise = FSPromise.FSPromise;
-    var Ribs = require("./ribs");
     var View = /** @class */ (function (_super) {
         __extends(View, _super);
         function View(options) {
@@ -328,7 +331,7 @@ var __extends = (this && this.__extends) || (function () {
             }
             if (!!this.model) {
                 if (this.options) {
-                    if (this.options.removeModelOnClose === true && !!this.collection === true) {
+                    if (this.options.removeModelOnClose === true && !!this.collection === true) { //!!this.model.collection === true) {
                         this.collection.remove(this.model);
                         //this.model.collection.remove(this.model);
                     }
@@ -362,7 +365,7 @@ var __extends = (this && this.__extends) || (function () {
             return this.$el;
         };
         View.prototype.clear = function () {
-            Ribs.Container.clear(this.options.listSelector);
+            container_1.default.clear(this.options.listSelector);
         };
         View.prototype.empty = function () {
             //Container.clear(this.options.listSelector);

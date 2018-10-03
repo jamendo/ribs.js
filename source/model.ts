@@ -4,16 +4,24 @@ import * as Backbone from 'backbone';
 import * as $ from 'jquery';
 import * as _ from 'underscore';
 import * as Ribs from './ribs';
+import { Collection } from './collection';
 
 export interface IModelOptions extends Backbone.ModelFetchOptions {
     adapter?: Ribs.Adapter.Adapter;
     closeModelOnDestroy?: boolean;
 }
 
-class Model<TAttr extends {} = { [attr: string]: any; }> extends Backbone.Model {
+export interface TModelAttributes {
+    [attr: string]: any;
+}
+
+class Model<TAttr extends TModelAttributes = TModelAttributes> extends Backbone.Model {
 
     public adapter: Ribs.Adapter.Adapter;
     protected isClose: Boolean;
+
+    attributes: TAttr;
+    collection: Collection<this>;
 
     constructor(attributes: TAttr, options?) {
         super(attributes, options);
@@ -156,7 +164,7 @@ class Model<TAttr extends {} = { [attr: string]: any; }> extends Backbone.Model 
                 return;
             }
 
-            model.set(this.changed);
+            model.set(this.changed as any as Partial<TAttr>);
 
         };
 

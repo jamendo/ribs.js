@@ -4,6 +4,7 @@ import * as Backbone from 'backbone';
 import * as _ from 'underscore';
 
 import * as Ribs from './ribs';
+import Model from './model';
 
 export interface ICollectionOptions extends Backbone.CollectionFetchOptions {
     adapter?: Ribs.Adapter.Adapter;
@@ -11,11 +12,11 @@ export interface ICollectionOptions extends Backbone.CollectionFetchOptions {
     reset?: boolean;
 }
 
-export class Collection extends Backbone.Collection<Backbone.Model> {
+export class Collection<T extends Model = Model> extends Backbone.Collection<T> {
 
     options: Ribs.ICollectionOptions;
     onInitialize;
-    collectionSource: Collection = null;
+    collectionSource: Collection<T> = null;
     _isRange: boolean = false;
     _currentRange: number = 0;
     _lengthRange: number = 5;
@@ -326,7 +327,7 @@ export class Collection extends Backbone.Collection<Backbone.Model> {
         if (this.models) {
             this.models.forEach((model) => {
                 if ('close' in model && model.collection === this) {
-                    (<Ribs.Model>model).close();
+                    model.close();
                 }
             });
 

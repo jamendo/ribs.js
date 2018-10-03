@@ -1,10 +1,10 @@
-/// <reference types="backbone" />
 /// <reference types="jquery" />
 import * as Backbone from 'backbone';
 import * as FSPromise from 'FSPromise';
 import Promise = FSPromise.FSPromise;
-import * as Ribs from './ribs';
-export interface IViewOptions extends Backbone.ViewOptions<Backbone.Model> {
+import { Collection } from './collection';
+import Model from './model';
+export interface IViewOptions<T extends Model = Model> extends Backbone.ViewOptions<T> {
     /**
      * If true, remove model from its collection on view close
      **/
@@ -14,7 +14,7 @@ export interface IViewOptions extends Backbone.ViewOptions<Backbone.Model> {
     templateVariables?: Object;
     ModelView?: typeof View;
     ModelViewOptions?: IViewOptions;
-    collection?: Ribs.Collection;
+    collection?: Collection;
     subviewAsyncRender?: boolean;
     closeModelOnClose?: boolean;
     closeCollectionOnClose?: boolean;
@@ -24,12 +24,12 @@ export interface IViewReference {
     $html: JQuery;
     container: Backbone.View<Backbone.Model>;
 }
-export declare class View extends Backbone.View<Backbone.Model> {
-    static defaultOptions: Ribs.IViewOptions;
-    options: Ribs.IViewOptions;
+export declare class View<T extends Model = Model> extends Backbone.View<T> {
+    static defaultOptions: IViewOptions;
+    options: IViewOptions;
     referenceModelView: {
         [selector: string]: {
-            [cid: string]: Ribs.View;
+            [cid: string]: View;
         };
     };
     isDispatch: boolean;
@@ -48,11 +48,12 @@ export declare class View extends Backbone.View<Backbone.Model> {
     protected isClose: Boolean;
     private removeModelCallback;
     private destroyViewCallback;
+    collection: Collection<T>;
     constructor(options?: any);
     initialize(options: any): void;
-    render(): View | Promise<View>;
-    reRenderModelView(): View | FSPromise.FSPromise<View>;
-    private htmlizeView();
+    render(): View<T> | Promise<View<T>>;
+    reRenderModelView(): View<Model<import("./model").TModelAttributes>> | FSPromise.FSPromise<View<Model<import("./model").TModelAttributes>>>;
+    private htmlizeView;
     htmlize(): JQuery | Promise<JQuery>;
     getModelAsJson(): any;
     getCollectionAsJson(): any;
@@ -62,25 +63,25 @@ export declare class View extends Backbone.View<Backbone.Model> {
     empty(): void;
     reset(collection: any): void;
     removeUnusedModelView(collection: any): void;
-    private addModel(model);
-    protected formatModelViewOptions(modelViewOptions: any): Ribs.IViewOptions;
-    private removeModel(model);
-    private sortModel($container?);
-    private updateCollection($container?);
-    private _updateCollection($container?);
+    private addModel;
+    protected formatModelViewOptions(modelViewOptions: any): IViewOptions;
+    private removeModel;
+    private sortModel;
+    private updateCollection;
+    private _updateCollection;
     addView(selector: string | {
-        [selector: string]: Ribs.View | Ribs.View[];
-    }, view: Ribs.View | Ribs.View[]): any;
-    private _addView(selector, view, $el?);
-    private onDestroySubView(view);
-    protected prepareAddedView(modelView: Ribs.View): Ribs.View;
+        [selector: string]: View | View[];
+    }, view: View | View[]): any;
+    private _addView;
+    private onDestroySubView;
+    protected prepareAddedView(modelView: View): View;
     protected onInitialize(): void;
     protected onInitializeStart(): void;
     protected onRender(): void;
     protected onRenderStart(): void;
     protected onRenderAll(): void;
-    protected onModelAdded(modelViewAdded: Ribs.View): void;
-    protected onModelRemoved(modelViewRemoved: Ribs.View): void;
+    protected onModelAdded(modelViewAdded: View): void;
+    protected onModelRemoved(modelViewRemoved: View): void;
     protected onClose(): void;
     protected onCloseStart(): void;
 }

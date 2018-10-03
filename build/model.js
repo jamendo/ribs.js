@@ -1,7 +1,10 @@
 var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    }
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -86,6 +89,9 @@ var __extends = (this && this.__extends) || (function () {
                 return Backbone.Model.prototype.get.call(this, attribute);
             }
         };
+        Model.prototype.set = function (attributeOrObj, valueOrOptions) {
+            return _super.prototype.set.call(this, attributeOrObj, valueOrOptions);
+        };
         Model.prototype.toJSON = function () {
             var _this = this;
             var attributes = Backbone.Model.prototype.toJSON.call(this);
@@ -167,7 +173,6 @@ var __extends = (this && this.__extends) || (function () {
         };
         return Model;
     }(Backbone.Model));
-    exports.Model = Model;
     ;
     exports.default = Model;
 });

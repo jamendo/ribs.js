@@ -7,10 +7,10 @@ import * as $ from 'jquery';
 import * as _ from 'underscore';
 import * as FSPromise from 'FSPromise';
 import Promise = FSPromise.FSPromise;
+import { Collection } from './collection';
+import Model from './model';
 
-import * as Ribs from './ribs';
-
-export interface IViewOptions extends Backbone.ViewOptions<Backbone.Model> {
+export interface IViewOptions<T extends Model = Model> extends Backbone.ViewOptions<T> {
     /** 
      * If true, remove model from its collection on view close
      **/
@@ -20,7 +20,7 @@ export interface IViewOptions extends Backbone.ViewOptions<Backbone.Model> {
     templateVariables?: Object;
     ModelView?: typeof View;
     ModelViewOptions?: IViewOptions;
-    collection?: Ribs.Collection;
+    collection?: Collection;
     subviewAsyncRender?: boolean;
     closeModelOnClose?: boolean;
     closeCollectionOnClose?: boolean;
@@ -32,9 +32,9 @@ export interface IViewReference {
     container: Backbone.View<Backbone.Model>;
 }
 
-export class View extends Backbone.View<Backbone.Model> {
+export class View<T extends Model = Model> extends Backbone.View<T> {
 
-    static defaultOptions: Ribs.IViewOptions = {
+    static defaultOptions: IViewOptions = {
         removeModelOnClose: true, // Boolean: If true, remove model from its collection on view close
         reRenderOnChange: false,
         listSelector: '.list',
@@ -45,9 +45,9 @@ export class View extends Backbone.View<Backbone.Model> {
         closeCollectionOnClose: true,
         subviewAsyncRender: false
     };
-    options: Ribs.IViewOptions;
+    options: IViewOptions;
 
-    referenceModelView: { [selector: string]: { [cid: string]: Ribs.View } };
+    referenceModelView: { [selector: string]: { [cid: string]: View } };
     isDispatch: boolean = false;
     template;
 
@@ -65,8 +65,10 @@ export class View extends Backbone.View<Backbone.Model> {
 
     protected isClose: Boolean;
 
-    private removeModelCallback: (model: Ribs.Model) => any;
-    private destroyViewCallback: (model: Ribs.Model) => any;
+    private removeModelCallback: (model: Model) => any;
+    private destroyViewCallback: (model: Model) => any;
+
+    public collection: Collection<T>;
 
     constructor(options?) {
         super(options);
@@ -118,7 +120,7 @@ export class View extends Backbone.View<Backbone.Model> {
 
     }
 
-    render(): View | Promise<View> {
+    render(): View<T> | Promise<View<T>> {
 
         this.onRenderStart();
 
@@ -127,7 +129,7 @@ export class View extends Backbone.View<Backbone.Model> {
 
         let htmlizeObject = this.htmlize();
 
-        let doRender = ($renderedTemplate: JQuery): View | Promise<View> => {
+        let doRender = ($renderedTemplate: JQuery): View<T> | Promise<View<T>> => {
 
             if (this.isClose) {
                 return this;
@@ -289,7 +291,7 @@ export class View extends Backbone.View<Backbone.Model> {
 
                     let promiseList: Promise<JQuery>[] = [];
 
-                    this.collection.models.forEach((model: Ribs.Model) => {
+                    this.collection.models.forEach((model: Model) => {
 
                         promiseList.push(this.addModel(model));
 
@@ -486,7 +488,7 @@ export class View extends Backbone.View<Backbone.Model> {
             // TODO: ...
 
             if ('close' in this.collection && (!this.options || this.options.closeCollectionOnClose !== false)) {
-                (<Ribs.Collection>this.collection).close();
+                this.collection.close();
             }
 
             this.collection = null;
@@ -495,7 +497,7 @@ export class View extends Backbone.View<Backbone.Model> {
 
         if (this.referenceModelView !== null) {
 
-            _.each(this.referenceModelView, (modelViewCollection: { [cid: string]: Ribs.View }, selector) => {
+            _.each(this.referenceModelView, (modelViewCollection: { [cid: string]: View }, selector) => {
 
                 _.each(modelViewCollection, (modelView, cid) => {
 
@@ -527,12 +529,12 @@ export class View extends Backbone.View<Backbone.Model> {
                 }
 
                 if (this.options.closeModelOnClose !== false && 'close' in this.model) {
-                    (<Ribs.Model>this.model).close();
+                    this.model.close();
                 }
 
             } else if ('close' in this.model) {
 
-                (<Ribs.Model>this.model).close();
+                this.model.close();
 
             }
 
@@ -577,7 +579,7 @@ export class View extends Backbone.View<Backbone.Model> {
 
     clear() {
 
-        Ribs.Container.clear(this.options.listSelector);
+        Container.clear(this.options.listSelector);
 
     }
 
@@ -587,7 +589,7 @@ export class View extends Backbone.View<Backbone.Model> {
 
         if (this.referenceModelView !== null) {
 
-            _.each(this.referenceModelView, (modelViewList: { [cid: string]: Ribs.View }, selector) => {
+            _.each(this.referenceModelView, (modelViewList: { [cid: string]: View }, selector) => {
                 _.each(modelViewList, (modelView, cid) => {
 
                     delete this.referenceModelView[selector][cid];
@@ -648,7 +650,7 @@ export class View extends Backbone.View<Backbone.Model> {
 
     }
 
-    private addModel(model: Ribs.Model): Promise<JQuery> {
+    private addModel(model: Model): Promise<JQuery> {
 
         if (this.isCollectionRendered === false) {
             return;
@@ -712,11 +714,11 @@ export class View extends Backbone.View<Backbone.Model> {
 
     }
 
-    protected formatModelViewOptions(modelViewOptions): Ribs.IViewOptions {
+    protected formatModelViewOptions(modelViewOptions): IViewOptions {
         return modelViewOptions;
     }
 
-    private removeModel(model: Ribs.Model) {
+    private removeModel(model: Model) {
 
         var view = this.referenceModelView[this.options.listSelector][model.cid];
 
@@ -837,7 +839,7 @@ export class View extends Backbone.View<Backbone.Model> {
         $container.css('display', displayCss);
     }
 
-    public addView(selector: string | { [selector: string]: Ribs.View | Ribs.View[] }, view: Ribs.View | Ribs.View[]) {
+    public addView(selector: string | { [selector: string]: View | View[] }, view: View | View[]) {
 
         let displayMode = this.$el.css('display') || '';// Use css because some time show/hide use not expected display value
         this.$el.css('display', 'none');// Don't display to avoid reflow
@@ -862,13 +864,13 @@ export class View extends Backbone.View<Backbone.Model> {
 
     }
 
-    private _addView(selector: string, view: Ribs.View | Ribs.View[], $el: JQuery = this.$el): JQuery | Promise<JQuery> | (JQuery | Promise<JQuery>)[] {
+    private _addView(selector: string, view: View | View[], $el: JQuery = this.$el): JQuery | Promise<JQuery> | (JQuery | Promise<JQuery>)[] {
 
         if (!(selector in this.referenceModelView)) {
             this.referenceModelView[selector] = {};
         }
 
-        let doAddView = (viewToAdd: Ribs.View): JQuery | Promise<JQuery> => {
+        let doAddView = (viewToAdd: View): JQuery | Promise<JQuery> => {
 
             this.referenceModelView[selector][viewToAdd.cid] = viewToAdd;
 
@@ -926,11 +928,11 @@ export class View extends Backbone.View<Backbone.Model> {
             return view.map(doAddView);
         }
 
-        return doAddView(<Ribs.View>view);
+        return doAddView(view);
     }
 
-    private onDestroySubView(view: Ribs.View) {
-        _.each(this.referenceModelView, (modelViewCollection: { [cid: string]: Ribs.View }, selector) => {
+    private onDestroySubView(view: View) {
+        _.each(this.referenceModelView, (modelViewCollection: { [cid: string]: View }, selector) => {
 
             _.each(modelViewCollection, (modelView, cid) => {
 
@@ -944,7 +946,7 @@ export class View extends Backbone.View<Backbone.Model> {
         });
     }
 
-    protected prepareAddedView(modelView: Ribs.View): Ribs.View {
+    protected prepareAddedView(modelView: View): View {
         return modelView;
     }
 
@@ -953,8 +955,8 @@ export class View extends Backbone.View<Backbone.Model> {
     protected onRender() { }
     protected onRenderStart() { }
     protected onRenderAll() { }
-    protected onModelAdded(modelViewAdded: Ribs.View) { }
-    protected onModelRemoved(modelViewRemoved: Ribs.View) { }
+    protected onModelAdded(modelViewAdded: View) { }
+    protected onModelRemoved(modelViewRemoved: View) { }
     protected onClose() { }
     protected onCloseStart() { }
 

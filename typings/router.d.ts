@@ -1,4 +1,3 @@
-/// <reference types="backbone" />
 import * as Backbone from 'backbone';
 export declare class Router extends Backbone.Router {
     constructor(options?: Backbone.RouterOptions);

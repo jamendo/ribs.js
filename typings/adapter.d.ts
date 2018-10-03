@@ -35,7 +35,7 @@ export declare module Adapter {
         protected doRequest(options: IRequestAdapterOptions): void;
         setRequestHeader(headerName: string, headerValue: string): Request;
         protected formatOptions(options: IRequestAdapterOptions): IRequestAdapterOptions;
-        private dispatchResult(errorList, responseList, successCallback, errorCallback);
+        private dispatchResult;
     }
 }
 export default Adapter;

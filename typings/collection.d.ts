@@ -1,16 +1,16 @@
-/// <reference types="backbone" />
 /// <reference types="jquery" />
 import * as Backbone from 'backbone';
 import * as Ribs from './ribs';
+import Model from './model';
 export interface ICollectionOptions extends Backbone.CollectionFetchOptions {
     adapter?: Ribs.Adapter.Adapter;
     comparator?: string | Function;
     reset?: boolean;
 }
-export declare class Collection extends Backbone.Collection<Backbone.Model> {
+export declare class Collection<T extends Model = Model> extends Backbone.Collection<T> {
     options: Ribs.ICollectionOptions;
     onInitialize: any;
-    collectionSource: Collection;
+    collectionSource: Collection<T>;
     _isRange: boolean;
     _currentRange: number;
     _lengthRange: number;
@@ -21,16 +21,16 @@ export declare class Collection extends Backbone.Collection<Backbone.Model> {
     initialize(models: any, options: any): void;
     batchSave(): void;
     sync(...arg: any[]): JQueryXHR;
-    getFilteredCollection(onlyDatas: any, notDatas: any): Collection;
-    getRange(start: any, length: any): Collection;
+    getFilteredCollection(onlyDatas: any, notDatas: any): Ribs.Collection<Model<Ribs.TModelAttributes>>;
+    getRange(start: any, length: any): Ribs.Collection<Model<Ribs.TModelAttributes>>;
     setIsCircularRange(isCircularRange: any): this;
     rangeNext(): this;
     rangeNextPage(): this;
     rangeGoTo(index: any, newLength: any): this;
     setRangeLength(length: any): this;
-    private getFilteredModels(models, onlyDatas, notDatas);
-    private getRangeOfCollection(collection, start, length);
-    private nextRange();
+    private getFilteredModels;
+    private getRangeOfCollection;
+    private nextRange;
     close(): void;
     readonly length: number;
     protected _removeModels(models: any, options: any): any[];
