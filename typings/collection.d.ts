@@ -21,8 +21,8 @@ export declare class Collection<T extends Model = Model> extends Backbone.Collec
     initialize(models: any, options: any): void;
     batchSave(): void;
     sync(...arg: any[]): JQueryXHR;
-    getFilteredCollection(onlyDatas: any, notDatas: any): Ribs.Collection<Model<Ribs.TModelAttributes>>;
-    getRange(start: any, length: any): Ribs.Collection<Model<Ribs.TModelAttributes>>;
+    getFilteredCollection(onlyDatas: any, notDatas: any): Ribs.Collection<Ribs.Model<Ribs.TModelAttributes>>;
+    getRange(start: any, length: any): Ribs.Collection<Ribs.Model<Ribs.TModelAttributes>>;
     setIsCircularRange(isCircularRange: any): this;
     rangeNext(): this;
     rangeNextPage(): this;

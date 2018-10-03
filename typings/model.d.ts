@@ -9,7 +9,7 @@ export interface IModelOptions extends Backbone.ModelFetchOptions {
 export interface TModelAttributes {
     [attr: string]: any;
 }
-declare class Model<TAttr extends TModelAttributes = TModelAttributes> extends Backbone.Model {
+export declare class Model<TAttr extends TModelAttributes = TModelAttributes> extends Backbone.Model {
     adapter: Ribs.Adapter.Adapter;
     protected isClose: Boolean;
     attributes: TAttr;
@@ -29,7 +29,7 @@ declare class Model<TAttr extends TModelAttributes = TModelAttributes> extends B
      * @param keepAlive If true, when this model will be destroy, the projection will not be destroyed.
      * @param twoWay If true, this model will be sync with its own attribute. So if a projection change one of these attributes, this model will be affected.
      **/
-    getModelProjection(modelClass?: typeof Model, keepAlive?: boolean, twoWay?: boolean): Model<TAttr>;
+    getModelProjection(modelClass?: typeof Model, keepAlive?: boolean, twoWay?: boolean): Ribs.Model<TAttr>;
     modelSource: Model;
     lastModelTriggered: Model;
     options: any;

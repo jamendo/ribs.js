@@ -173,6 +173,7 @@ var __extends = (this && this.__extends) || (function () {
         };
         return Model;
     }(Backbone.Model));
+    exports.Model = Model;
     ;
     exports.default = Model;
 });
