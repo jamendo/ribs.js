@@ -9,7 +9,7 @@ export interface IModelOptions extends Backbone.ModelFetchOptions {
 export interface IModelAttributes {
     [attr: string]: any;
 }
-export declare class Model<TAttr extends IModelAttributes = IModelAttributes> extends Backbone.Model {
+export declare class Model<TAttr extends IModelAttributes = any> extends Backbone.Model {
     adapter: Ribs.Adapter.Adapter;
     protected isClose: Boolean;
     attributes: TAttr;

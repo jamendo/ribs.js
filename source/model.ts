@@ -15,7 +15,7 @@ export interface IModelAttributes {
     [attr: string]: any;
 }
 
-export class Model<TAttr extends IModelAttributes = IModelAttributes> extends Backbone.Model {
+export class Model<TAttr extends IModelAttributes = any> extends Backbone.Model {
 
     public adapter: Ribs.Adapter.Adapter;
     protected isClose: Boolean;
