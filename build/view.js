@@ -457,7 +457,10 @@ var __extends = (this && this.__extends) || (function () {
             delete this.referenceModelView[this.options.listSelector][model.cid];
             this.onModelRemoved(view);
             view.stopListening(view, 'close', this.destroyViewCallback);
-            view.close();
+            // Avoid circular close
+            if (!view.isClose) {
+                view.close();
+            }
             return view;
         };
         View.prototype.sortModel = function ($container) {

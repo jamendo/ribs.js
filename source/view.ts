@@ -737,7 +737,10 @@ export class View extends Backbone.View<Model> {
 
         view.stopListening(view, 'close', this.destroyViewCallback);
 
-        view.close();
+        // Avoid circular close
+        if (!view.isClose) {
+            view.close();
+        }
 
         return view;
 
